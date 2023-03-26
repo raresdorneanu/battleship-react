@@ -1,0 +1,79 @@
+.homepage-start {
+  padding-bottom: 50px;
+  width: 70%;
+  .container {
+    max-width: 350px;
+    margin: auto;
+  }
+  h2 {
+    font-family: "Smokum", cursive;
+    font-size: 54px;
+    color: #fff;
+    opacity: 0.9;
+    margin-bottom: 20px;
+    font-weight: 200;
+    letter-spacing: 3px;
+    line-height: 4rem;
+  }
+  .form-account {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    label {
+      text-align: left !important;
+      margin-bottom: 0.5rem;
+      font-size: 14px;
+      color: #fff;
+      text-transform: capitalize;
+      letter-spacing: 0.2rem;
+      font-weight: 400;
+    }
+    input {
+      margin-bottom: 1rem;
+      padding: 10px 20px;
+      outline: none;
+      background-color: transparent;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 200;
+    }
+    .click-for-register {
+      font-size: 14px;
+      color: #fff;
+      background: transparent;
+      outline: none;
+      cursor: pointer;
+      border: none;
+      text-decoration: underline;
+      font-style: italic;
+      height: 20px;
+      display: inline-block;
+      position: relative;
+    }
+  }
+}
+.sign-in-div {
+  width: 55%;
+}
+.response-message {
+  font-family: "Poppins", sans-serif !important;
+  font-size: 42px !important;
+  font-weight: bold;
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  left: calc(50% - 288.4px);
+}
+
+.error-message {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  position: relative;
+  font-weight: 400;
+}
