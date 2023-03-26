@@ -1,5 +1,5 @@
-export const handleOrientation = (activeShip, setShipSet) => {
-  if (activeShip) {
+export const handleOrientation = (activeShip, setShipSet, mapConfigSent) => {
+  if (activeShip && !mapConfigSent) {
     setShipSet((prevShips) =>
       prevShips.map((ship) => {
         if (ship.id === activeShip) {

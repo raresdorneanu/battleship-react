@@ -1,5 +1,11 @@
-export const handleCellClick = (pos, activeShip, shipSet, setShipSet) => {
-  if (activeShip) {
+export const handleCellClick = (
+  pos,
+  activeShip,
+  shipSet,
+  setShipSet,
+  mapConfigSent
+) => {
+  if (activeShip && !mapConfigSent) {
     const [row, col] = pos.split("-");
     const size = shipSet.find((ship) => ship.id === activeShip).size;
     const orientation = shipSet.find(

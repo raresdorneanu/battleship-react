@@ -72,6 +72,7 @@ const Games = () => {
               </div>
               <div className="game-vs">
                 <h2>VS</h2>
+                <p>id: {game.id}</p>
               </div>
             </div>
           ))}

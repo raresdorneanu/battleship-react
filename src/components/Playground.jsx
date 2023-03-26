@@ -14,6 +14,7 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
   const [gameDetails, setGameDetails] = useState("");
   const [activeShip, setActiveShip] = useState(null);
   const token = localStorage.getItem("token");
+  const [mapConfigSent, setMapConfigSent] = useState(false);
 
   useEffect(() => {
     async function getUserDetails() {
@@ -42,12 +43,12 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
   }, [token, gameId, setShowGame, showGame]);
   const handleCellClickWrapper = (pos) => {
     // create a wrapper function to pass as the callback to the Grid component
-    handleCellClick(pos, activeShip, shipSet, setShipSet); // call the imported handleCellClick function with the required arguments
+    handleCellClick(pos, activeShip, shipSet, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
   };
 
   const handleOrientationWrapper = () => {
     // create a wrapper function to pass as the callback to the Grid component
-    handleOrientation(activeShip, setShipSet); // call the imported handleCellClick function with the required arguments
+    handleOrientation(activeShip, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
   };
 
   // const handleCellClick = (cellCoordinate) => {
@@ -87,6 +88,33 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
           },
         }
       );
+      if (response.status === 200) {
+        console.log(response);
+        setMapConfigSent(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setMapConfigSent(true);
+    }
+  };
+
+  const handleSendStrike = async () => {
+    const requestBody = {
+      x: shipSet.position?.split("-")[1], // assuming the first ship in the shipSet is the one being used for the strike
+      y: parseInt(shipSet.position?.split("-")[0]),
+    };
+
+    try {
+      const response = await axios.post(
+        `https://react-labs.softbinator.com/game/${gameId}/strike`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -99,8 +127,19 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
         ships={shipSet}
         onCellClick={handleCellClickWrapper}
         activeShip={activeShip}
+        setShowGame={setShowGame}
+        gameId={gameId}
+        showGame={showGame}
+        setShips={setShipSet}
       />
-      <Ship ships={shipSet} setActiveShip={setActiveShip} />
+      <Ship
+        ships={shipSet}
+        setActiveShip={setActiveShip}
+        token={token}
+        gameId={gameId}
+        showGame={showGame}
+        setShowGame={setShowGame}
+      />
       <button onClick={handleOrientationWrapper}>Change orientation</button>
       <button onClick={handleSendMapConfig}>READY</button>
       <button onClick={handleBackToAllGames}>Back To All Games</button>
@@ -116,7 +155,10 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
             Player2 Email: {gameDetails?.player2Email}
           </p>
           <p style={{ color: "#000" }}>
-            Player to move: {gameDetails?.playerToMoveId}
+            Player to move:{" "}
+            {gameDetails?.playerToMoveId
+              ? gameDetails.player1Email.split("@")[0]
+              : gameDetails.player2Email.split("@")[0]}
           </p>
           <p>Moves: {JSON.stringify(gameDetails?.moves)}</p>
           <p>Ships Coord: {JSON.stringify(gameDetails?.shipsCoord)}</p>
