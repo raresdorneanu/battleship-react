@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Button from "./button/button.component";
 
 const SignInForm = (props) => {
-  const [noAction, setNoAction] = useState(true);
   return (
     <div className="homepage-start">
       <div className="container">
@@ -22,7 +21,7 @@ const SignInForm = (props) => {
             onChange={(e) => props.setPassword(e.target.value)}
             id="pass-sign-in"
           />
-          <Button noAction={noAction} type="submit" className="styled-button">
+          <Button type="submit" className="styled-button">
             SIGN IN
           </Button>
           <button className="click-for-register" onClick={props.enterRegister}>

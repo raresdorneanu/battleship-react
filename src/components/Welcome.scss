@@ -1,0 +1,38 @@
+.welcome-message {
+  h1,
+  span {
+    font-size: 42px;
+    color: #fff;
+    margin-bottom: 20px;
+    font-weight: 200;
+    letter-spacing: 3px;
+    line-height: 4rem;
+  }
+  .player-info {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    .player-games-info {
+      border-radius: 10px;
+      padding: 20px;
+      margin-right: 20px;
+      background-color: #800020;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+      p {
+        color: #fff;
+        font-size: 18px;
+        margin: 0;
+      }
+    }
+  }
+}

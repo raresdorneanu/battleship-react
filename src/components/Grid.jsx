@@ -1,31 +1,16 @@
 import React, { useState, useEffect } from "react";
-import getGameDetails from "../api/GetGameDetailsApi";
 import "../styles/Grid.scss";
 
-const Grid = ({
-  onCellClick,
-  ships,
-  gameId,
-  setShowGame,
-  showGame,
-  setShips,
-}) => {
+const Grid = (props) => {
   const token = localStorage.getItem("token");
   const [shipsCoord, setShipsCoord] = useState([]);
+  const [moves, setMoves] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const gameDetails = await getGameDetails(
-        token,
-        gameId,
-        setShowGame,
-        showGame
-      );
-      setShipsCoord(gameDetails.shipsCoord);
-    };
-
-    fetchData();
-  }, []);
+    setShipsCoord(props.gameDetails?.shipsCoord);
+    setMoves(props.gameDetails?.moves);
+    console.log(moves);
+  }, [props.gameDetails]);
 
   let tempRows = [];
   for (let i = 1; i <= 10; i++) {
@@ -53,7 +38,7 @@ const Grid = ({
 
   const getCellBackgroundColor = (cellCoordinate) => {
     let backgroundColor = "";
-    if (shipsCoord.length > 0) {
+    if (shipsCoord?.length > 0) {
       const [row, col] = cellCoordinate.split("-");
       const cellCoord = { x: col, y: parseInt(row) };
 
@@ -64,7 +49,7 @@ const Grid = ({
         }
       });
     } else {
-      ships.forEach((ship) => {
+      props.ships?.forEach((ship) => {
         if (ship.position) {
           const [row, col] = ship.position.split("-");
           const size = ship.size;
@@ -100,16 +85,56 @@ const Grid = ({
     return backgroundColor;
   };
 
+  const getCellContent = (cellCoordinate) => {
+    if (moves?.length > 0) {
+      const [row, col] = cellCoordinate.split("-");
+      const cellCoord = { x: col, y: parseInt(row) };
+
+      const move = moves.find(
+        (m) =>
+          m.playerId !== props.myId &&
+          m.x === cellCoord.x &&
+          m.y === cellCoord.y
+      );
+
+      if (move) {
+        if (move.result) {
+          return "x";
+        } else if (getCellBackgroundColor(cellCoordinate) !== "yellow") {
+          return "o";
+        }
+      }
+    }
+    return "";
+  };
+
+  const yellowCells = grid.filter(
+    (cellCoordinate) => getCellBackgroundColor(cellCoordinate) === "yellow"
+  );
+
+  const xCount = yellowCells.reduce((count, cellCoordinate) => {
+    const content = getCellContent(cellCoordinate);
+    return count + (content === "x" ? 1 : 0);
+  }, 0);
+
+  let message = "";
+  if (props.gameDetails?.gameStatus === "FINISHED") {
+    message = xCount === 31 ? "YOU LOST" : "YOU WIN";
+  }
+
   return (
     <div className="grid-container">
       {grid.map((elem, index) => (
         <div
           className="cell"
           key={index}
-          onClick={() => onCellClick(elem)}
+          onClick={() => props.onCellClick(elem)}
           style={{ backgroundColor: getCellBackgroundColor(elem) }}
-        ></div>
+        >
+          {getCellContent(elem)}
+        </div>
       ))}
+      {message && <div>{message}</div>}
     </div>
   );
 };

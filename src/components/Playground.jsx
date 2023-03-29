@@ -6,32 +6,70 @@ import { handleCellClick } from "../utils/cellClick";
 import { handleOrientation } from "../utils/orientation";
 import ships from "../utils/shipData";
 import getGameDetails from "../api/GetGameDetailsApi";
-import handleGetUserDetails from "../api/GetUserDetailsApi";
+import GridAction from "./GridAction";
+import handleSendMapConfig from "../api/SendMapConfigApi";
 
-const Playground = ({ gameId, showGame, setShowGame }) => {
+const Playground = (props) => {
   const [shipSet, setShipSet] = useState(ships);
-  const [userDetails, setUserDetails] = useState("");
   const [gameDetails, setGameDetails] = useState("");
   const [activeShip, setActiveShip] = useState(null);
-  const token = localStorage.getItem("token");
   const [mapConfigSent, setMapConfigSent] = useState(false);
+  const [open, setOpen] = useState(false);
+  const name = localStorage.getItem("name").split("@")[0];
+  const [shipsCoord, setShipsCoord] = useState([]);
+  const [gridData, setGridData] = useState([]);
+  const [playerName, setPlayerName] = useState("");
+  const token = localStorage.getItem("token");
+  const [gameId, setGameId] = useState(props.gameId);
+  const [myId, setMyId] = useState("");
+
+  const handleMyId = () => {
+    if (gameDetails) {
+      gameDetails?.player1Email?.split("@")[0] === name
+        ? setMyId(gameDetails?.player1Id)
+        : setMyId(gameDetails?.player2Id);
+    }
+  };
 
   useEffect(() => {
-    async function getUserDetails() {
-      const userDetails = await handleGetUserDetails(token);
-      setUserDetails(userDetails);
+    if (gameDetails) {
+      setPlayerName(
+        gameDetails.playerToMoveId === gameDetails.player1Id
+          ? gameDetails.player1Email?.split("@")[0]
+          : gameDetails.player2Email?.split("@")[0]
+      );
     }
-    getUserDetails();
+  }, [gameDetails]);
 
+  useEffect(() => {
+    handleMyId();
+  }, [myId, gameDetails]);
+
+  useEffect(() => {
+    handleMyId();
+  }, [myId, gameDetails]);
+
+  useEffect(() => {
+    if (
+      gameDetails &&
+      shipsCoord?.length > 0 &&
+      gameDetails?.playerToMoveId === myId
+    ) {
+      setOpen(true);
+    }
+  }, [shipsCoord, gameDetails]);
+
+  useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const gameDetails = await getGameDetails(
           token,
           gameId,
-          setShowGame,
-          showGame
+          props.setShowGame,
+          props.showGame
         );
         setGameDetails(gameDetails);
+        setShipsCoord(gameDetails.shipsCoord);
       } catch (error) {
         console.error(error);
       }
@@ -40,7 +78,8 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [token, gameId, setShowGame, showGame]);
+  }, [gameDetails]);
+
   const handleCellClickWrapper = (pos) => {
     // create a wrapper function to pass as the callback to the Grid component
     handleCellClick(pos, activeShip, shipSet, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
@@ -51,74 +90,12 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
     handleOrientation(activeShip, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
   };
 
-  // const handleCellClick = (cellCoordinate) => {
-  //   if (activeShip) {
-  //     setShips((prevShips) =>
-  //       prevShips.map((ship) =>
-  //         ship.id === activeShip ? { ...ship, position: cellCoordinate } : ship
-  //       )
-  //     );
-  //   }
-  // };
-
   const handleBackToAllGames = () => {
-    setShowGame(false);
+    props.setShowGame(false);
   };
 
-  const handleSendMapConfig = async () => {
-    const requestBody = {
-      ships: shipSet
-        .filter((ship) => ship.position !== null)
-        .map((ship) => ({
-          x: ship.position?.split("-")[1],
-          y: parseInt(ship.position?.split("-")[0]),
-          size: ship.size,
-          direction: ship.orientation?.toUpperCase(),
-        })),
-    };
-
-    try {
-      const response = await axios.patch(
-        `https://react-labs.softbinator.com/game/${gameId}`,
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log(response);
-        setMapConfigSent(true);
-      }
-    } catch (error) {
-      console.log(error);
-      setMapConfigSent(true);
-    }
-  };
-
-  const handleSendStrike = async () => {
-    const requestBody = {
-      x: shipSet.position?.split("-")[1], // assuming the first ship in the shipSet is the one being used for the strike
-      y: parseInt(shipSet.position?.split("-")[0]),
-    };
-
-    try {
-      const response = await axios.post(
-        `https://react-labs.softbinator.com/game/${gameId}/strike`,
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
+  const sendMapConfig = async () => {
+    handleSendMapConfig(shipSet, token, setMapConfigSent, gameId);
   };
 
   return (
@@ -127,23 +104,42 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
         ships={shipSet}
         onCellClick={handleCellClickWrapper}
         activeShip={activeShip}
-        setShowGame={setShowGame}
+        setShowGame={props.setShowGame}
         gameId={gameId}
-        showGame={showGame}
+        showGame={props.showGame}
         setShips={setShipSet}
+        gameDetails={gameDetails}
+        myId={myId}
       />
-      <Ship
-        ships={shipSet}
-        setActiveShip={setActiveShip}
-        token={token}
+      <div>{playerName === name ? <h2>Your turn!</h2> : null}</div>;
+      <GridAction
+        showGame={props.showGame}
+        setShowGame={props.setShowGame}
         gameId={gameId}
-        showGame={showGame}
-        setShowGame={setShowGame}
+        onCellClick={handleCellClickWrapper}
+        gameDetails={gameDetails}
+        open={open}
+        setOpen={setOpen}
+        gridData={gridData}
+        setGridData={setGridData}
+        myId={myId}
+        playerName={playerName}
+        name={name}
       />
+      {gameDetails?.shipsCoord?.length > 0 ? null : (
+        <Ship
+          ships={shipSet}
+          setActiveShip={setActiveShip}
+          token={token}
+          gameId={gameId}
+          showGame={props.showGame}
+          setShowGame={props.setShowGame}
+        />
+      )}
       <button onClick={handleOrientationWrapper}>Change orientation</button>
-      <button onClick={handleSendMapConfig}>READY</button>
+      <button onClick={sendMapConfig}>READY</button>
       <button onClick={handleBackToAllGames}>Back To All Games</button>
-      {gameDetails.player2Id ? (
+      {gameDetails?.player2Id ? (
         <div className="game-details">
           <p style={{ color: "#000" }}>Id: {gameDetails?.id}</p>
           <p style={{ color: "#000" }}>Player1Id: {gameDetails?.player1Id}</p>
@@ -165,13 +161,7 @@ const Playground = ({ gameId, showGame, setShowGame }) => {
           <p style={{ color: "#000" }}>
             Game Status: {gameDetails?.gameStatus}
           </p>
-          <p>
-            It is{" "}
-            {gameDetails?.playerToMoveId
-              ? gameDetails?.player1Email?.split("@")[0]
-              : gameDetails?.player2Email?.split("@")[0]}{" "}
-            turn
-          </p>
+          <p>It is {playerName}'s turn</p>
         </div>
       ) : (
         <p style={{ color: "#fff", fontSize: "24px" }}>Waiting for opponent</p>

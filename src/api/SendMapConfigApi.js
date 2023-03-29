@@ -1,25 +1,40 @@
-// import axios from "axios";
-// import React from "react";
+import axios from "axios";
 
-// const sendMapConfig = async (gameId, token, requestBody) => {
-//   try {
-//     const response = await axios.get(
-//       `https://react-labs.softbinator.com/game/${gameId}`,
-//       { requestBody },
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-//     console.log(response);
-//   } catch (error) {
-//     console.log(error);
-//     console.log("token", token);
-//     console.log("gameid", gameId);
-//     console.log(requestBody);
-//   }
-// };
+const handleSendMapConfig = async (
+  shipSet,
+  token,
+  setMapConfigSent,
+  gameId
+) => {
+  const requestBody = {
+    ships: shipSet
+      .filter((ship) => ship.position !== null)
+      .map((ship) => ({
+        x: ship.position?.split("-")[1],
+        y: parseInt(ship.position?.split("-")[0]),
+        size: ship.size,
+        direction: ship.orientation?.toUpperCase(),
+      })),
+  };
 
-// export default sendMapConfig;
+  try {
+    const response = await axios.patch(
+      `https://react-labs.softbinator.com/game/${gameId}`,
+      requestBody,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      console.log(response);
+      setMapConfigSent(true);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default handleSendMapConfig;

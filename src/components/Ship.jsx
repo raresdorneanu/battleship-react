@@ -26,7 +26,7 @@ const Ship = (props) => {
 
   return (
     <div>
-      {shipsCoord.length > 0 ? (
+      {shipsCoord?.length > 0 ? (
         <div></div>
       ) : (
         <div>

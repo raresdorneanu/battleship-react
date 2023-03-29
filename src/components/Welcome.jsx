@@ -1,34 +1,29 @@
 import React, { useEffect, useState } from "react";
 import handleGetUserDetails from "../api/GetUserDetailsApi";
+import "./Welcome.scss";
 
-const Welcome = () => {
-  const [name, setName] = useState("");
-  const token = localStorage.getItem("token");
-  const tokenName = localStorage.getItem("name");
-  const [userDetails, setUserDetails] = useState("");
-  useEffect(() => {
-    async function getUserDetails() {
-      const response = await handleGetUserDetails(token);
-      setUserDetails(response);
-    }
-    getUserDetails();
-
-    setName(tokenName.split("@")[0]);
-  }, []);
-
+const Welcome = (props) => {
   return (
-    <div>
+    <div className="welcome-message">
       <h1>
-        Welcome, <span>{name}</span>
+        Welcome, <span>{props.name}</span>
       </h1>
-      <p style={{ color: "#fff" }}>Id: {userDetails.userId}</p>
-      <p style={{ color: "#fff" }}>Email: {userDetails.email}</p>
-      <p style={{ color: "#fff" }}>Games Played: {userDetails.gamesPlayed}</p>
-      <p style={{ color: "#fff" }}>Games Won: {userDetails.gamesWon}</p>
-      <p style={{ color: "#fff" }}>Games Lost: {userDetails.gamesLost}</p>
-      <p style={{ color: "#fff" }}>
-        Currently Games Playing: {userDetails.currentlyGamesPlaying}
-      </p>
+      <div className="player-info">
+        <div className="player-games-info">
+          <p>Games Played: {props.userDetails.gamesPlayed}</p>
+        </div>
+        <div className="player-games-info">
+          <p>Games Won: {props.userDetails.gamesWon}</p>
+        </div>
+        <div className="player-games-info">
+          <p>Games Lost: {props.userDetails.gamesLost}</p>
+        </div>
+        <div className="player-games-info">
+          <p>
+            Currently Games Playing: {props.userDetails.currentlyGamesPlaying}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
