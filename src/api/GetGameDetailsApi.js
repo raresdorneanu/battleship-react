@@ -42,7 +42,7 @@ const getGameDetails = async (token, gameId, setShowGame, showGame) => {
       return result;
     }
   } catch (error) {
-    console.log(error);
+    alert("This game is full!");
   }
 };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/Grid.scss";
-
+import "./GridMarks.scss";
 const Grid = (props) => {
   const token = localStorage.getItem("token");
   const [shipsCoord, setShipsCoord] = useState([]);
@@ -9,7 +8,7 @@ const Grid = (props) => {
   useEffect(() => {
     setShipsCoord(props.gameDetails?.shipsCoord);
     setMoves(props.gameDetails?.moves);
-    console.log(moves);
+    console.log(props.gameDetails?.shipsCoord?.length);
   }, [props.gameDetails]);
 
   let tempRows = [];
@@ -45,7 +44,7 @@ const Grid = (props) => {
       shipsCoord.forEach((shipCoord) => {
         const { x, y } = shipCoord;
         if (x === cellCoord.x && y === cellCoord.y) {
-          backgroundColor = "yellow";
+          backgroundColor = "#800020";
         }
       });
     } else {
@@ -64,7 +63,7 @@ const Grid = (props) => {
               cellRow >= shipHeadRow &&
               cellRow <= shipTailRow
             ) {
-              backgroundColor = "yellow";
+              backgroundColor = "#800020";
             }
           } else {
             const cellCol = cellCoordinate.split("-")[1].charCodeAt(0);
@@ -76,7 +75,7 @@ const Grid = (props) => {
               cellCol >= shipHeadCol &&
               cellCol <= shipTailCol
             ) {
-              backgroundColor = "yellow";
+              backgroundColor = "#800020";
             }
           }
         }
@@ -89,52 +88,60 @@ const Grid = (props) => {
     if (moves?.length > 0) {
       const [row, col] = cellCoordinate.split("-");
       const cellCoord = { x: col, y: parseInt(row) };
-
       const move = moves.find(
         (m) =>
           m.playerId !== props.myId &&
           m.x === cellCoord.x &&
           m.y === cellCoord.y
       );
-
       if (move) {
         if (move.result) {
-          return "x";
-        } else if (getCellBackgroundColor(cellCoordinate) !== "yellow") {
-          return "o";
+          return <div className="hit-mark"></div>;
+        } else if (getCellBackgroundColor(cellCoordinate) !== "#800020") {
+          return <div className="miss-mark"></div>;
         }
       }
     }
     return "";
   };
 
-  const yellowCells = grid.filter(
-    (cellCoordinate) => getCellBackgroundColor(cellCoordinate) === "yellow"
+  const redCells = grid.filter(
+    (cellCoordinate) => getCellBackgroundColor(cellCoordinate) === "#800020"
   );
 
-  const xCount = yellowCells.reduce((count, cellCoordinate) => {
+  const xCount = redCells.reduce((count, cellCoordinate) => {
     const content = getCellContent(cellCoordinate);
-    return count + (content === "x" ? 1 : 0);
+    return count + (content && content.props.className === "hit-mark" ? 1 : 0);
   }, 0);
 
-  let message = "";
   if (props.gameDetails?.gameStatus === "FINISHED") {
-    message = xCount === 31 ? "YOU LOST" : "YOU WIN";
+    props.setFinishMessage(xCount === 31 ? "YOU LOST" : "YOU WIN");
   }
 
   return (
-    <div className="grid-container">
-      {grid.map((elem, index) => (
-        <div
-          className="cell"
-          key={index}
-          onClick={() => props.onCellClick(elem)}
-          style={{ backgroundColor: getCellBackgroundColor(elem) }}
-        >
-          {getCellContent(elem)}
-        </div>
-      ))}
-      {message && <div>{message}</div>}
+    <div
+      className="grid-container-big"
+      style={
+        shipsCoord?.length > 0
+          ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
+          : null
+      }
+    >
+      <h2>Your Grid:</h2>
+      <div className="grid-container">
+        {grid.map((elem, index) => (
+          <div
+            className={`cell ${
+              props.gameDetails?.shipsCoord?.length <= 0 ? "cell-hover" : ""
+            }`}
+            key={index}
+            onClick={() => props.onCellClick(elem)}
+            style={{ backgroundColor: getCellBackgroundColor(elem) }}
+          >
+            {getCellContent(elem)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

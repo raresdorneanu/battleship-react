@@ -1,7 +1,7 @@
 import axios from "axios";
 import getGameDetails from "./GetGameDetailsApi";
 
-const joinGame = async (token, gameId, setShowGame, showGame) => {
+const joinGame = async (token, gameId, setShowGame, showGame, name) => {
   try {
     const response = await axios.post(
       `https://react-labs.softbinator.com/game/join/${gameId}`,
@@ -13,12 +13,11 @@ const joinGame = async (token, gameId, setShowGame, showGame) => {
         },
       }
     );
-    console.log(response.data); // Add this line to check the response data
+
     if (response.status === 200) {
       setShowGame(true);
     }
   } catch (error) {
-    console.log(gameId);
     await getGameDetails(token, gameId, setShowGame, showGame);
   }
 };

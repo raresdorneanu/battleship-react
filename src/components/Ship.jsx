@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import getGameDetails from "../api/GetGameDetailsApi";
+import submarine from "../images/submarine.png";
+import carrier from "../images/carrier.png";
+import destroyer from "../images/destroyer.png";
+import cruiser from "../images/cruiser.png";
+import battleship from "../images/battleship.png";
 
 const Ship = (props) => {
   const [activeShip, setActiveShip] = useState(null);
@@ -25,25 +30,52 @@ const Ship = (props) => {
   };
 
   return (
-    <div>
-      {shipsCoord?.length > 0 ? (
-        <div></div>
-      ) : (
-        <div>
+    <div className="ship-item-container-big">
+      {shipsCoord?.length > 0 ? null : (
+        <div className="ship-item-container">
           {props.ships.map((ship) => (
             <div
               key={ship.id}
-              className={ship.id === activeShip ? "active" : ""}
+              className={`ship-item ${ship.id === activeShip ? "active" : ""}`}
               onClick={() => handleShipClick(ship.id)}
-              style={{
-                border: "1px solid red",
-                display: "inline-block",
-                cursor: "pointer",
-              }}
             >
-              <p>Size: {ship.size}</p>
-              <p>Position: {ship.position}</p>
-              <p>Position: {ship.orientation}</p>
+              <div className="ship-name">
+                <p>
+                  {ship.size === 2
+                    ? "Destroyer"
+                    : ship.size === 3
+                    ? "Submarine"
+                    : ship.size === 4
+                    ? "Battleship"
+                    : "Carrier"}
+                </p>
+              </div>
+              <div className="ship-position">
+                <span>{ship.position !== null ? <p>PLACED</p> : null}</span>
+              </div>
+              <div className="ship-size">
+                <p>Size: {ship.size}</p>
+              </div>
+              <img
+                src={
+                  ship.size === 2
+                    ? destroyer
+                    : ship.size === 3
+                    ? submarine
+                    : ship.size === 4
+                    ? battleship
+                    : carrier
+                }
+                alt={
+                  ship.size === 2
+                    ? "destroyer"
+                    : ship.size === 3
+                    ? "submarine"
+                    : ship.size === 4
+                    ? "battleship"
+                    : "carrier"
+                }
+              />
             </div>
           ))}
         </div>

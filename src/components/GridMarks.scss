@@ -1,0 +1,92 @@
+.hit-mark {
+  width: 100%;
+  height: 100%;
+  background-color: #fa6900;
+  border-radius: 5px;
+  position: relative;
+  &::before {
+    position: absolute;
+    top: -18px;
+    left: -15px;
+    content: "\274c";
+    font-size: 24px;
+    color: #fff;
+  }
+}
+
+.miss-mark {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  position: relative;
+  &::before {
+    position: absolute;
+    top: -18px;
+    left: -15px;
+    content: "\1F61C";
+    font-size: 24px;
+    color: #000;
+  }
+}
+
+.hit-mark-op {
+  width: 100%;
+  height: 100%;
+  background-color: #fa6900;
+  border-radius: 5px;
+  position: relative;
+  &::before {
+    position: absolute;
+    top: -18px;
+    left: -15px;
+    content: "\1F3AF";
+    font-size: 24px;
+    color: #fff;
+  }
+}
+
+.miss-mark-op {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  position: relative;
+  &::before {
+    position: absolute;
+    top: -18px;
+    left: -15px;
+    content: "\1F622";
+    font-size: 24px;
+    color: #000;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .miss-mark {
+    &::before {
+      font-size: 14px;
+      top: -10px;
+      left: -10px;
+    }
+  }
+  .hit-mark {
+    &::before {
+      font-size: 14px;
+      top: -10px;
+      left: -10px;
+    }
+  }
+  .hit-mark-op {
+    &::before {
+      font-size: 14px;
+      top: -10px;
+      left: -10px;
+    }
+  }
+  .miss-mark-op {
+    &::before {
+      font-size: 14px;
+      top: -10px;
+      left: -10px;
+    }
+  }
+}

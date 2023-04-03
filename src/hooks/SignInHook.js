@@ -20,15 +20,12 @@ const useSignInApi = () => {
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log(response.data);
       if (response.status === 200) {
         localStorage.setItem("token", response.data.accessToken);
         console.log(localStorage.getItem("token"));
         navigate("/dashboard");
       }
     } catch (error) {
-      console.log(error);
-
       setErrorMessage("Invalid email or password. Please try again.");
     }
   };

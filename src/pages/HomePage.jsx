@@ -12,7 +12,7 @@ const HomePage = () => {
     <Background>
       <div className="homepage-start">
         <div className="container">
-          <h2>BATTLESHIP</h2>
+          <h2 className="game-title">BATTLESHIP</h2>
           <Button onClick={navigateSignIn}>PLAY</Button>
         </div>
       </div>

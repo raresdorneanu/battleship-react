@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import Games from "../components/Games";
 import Welcome from "../components/Welcome";
 import "./Dashboard.scss";
-import LogoutButton from "../components/LogoutButton";
 import createGame from "../api/CreateGameApi";
 import handleGetUserDetails from "../api/GetUserDetailsApi";
 import getAllGames from "../api/GetAllGamesApi";
 import Background from "../components/background/background.component";
-import Button from "../components/button/button.component";
+import joinGame from "../api/JoinGameApi";
+import Playground from "../components/Playground";
 
 const Dashboard = () => {
   const token = localStorage.getItem("token");
@@ -15,7 +15,8 @@ const Dashboard = () => {
   const [userDetails, setUserDetails] = useState("");
   const [name, setName] = useState("");
   const tokenName = localStorage.getItem("name");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [showGame, setShowGame] = useState(false);
+  const [gameId, setGameId] = useState("");
 
   useEffect(() => {
     async function getUserDetails() {
@@ -39,44 +40,36 @@ const Dashboard = () => {
     createGame(token, setGames);
   };
 
-  const filteredGames = games.filter((game) => {
-    if (!game.player1 && !game.player2) {
-      return false;
-    }
-    return (
-      game.player1?.email?.includes(searchTerm) ||
-      game.player2?.email?.includes(searchTerm)
-    );
-  });
+  const handleJoinGame = (gameId) => {
+    setGameId(gameId);
+    joinGame(token, gameId, setShowGame, showGame, name);
+  };
 
   return (
-    <Background>
-      <div className="dashboard">
-        <Welcome token={token} userDetails={userDetails} name={name} />
-        <div className="games-container-big">
-          <Games
-            token={token}
-            games={games}
-            handleCreateGame={handleCreateGame}
-            filteredGames={filteredGames}
-          />
-        </div>
-        <div className="dash-bottom">
-          <div className="search-for-player">
-            <h3>Search for player:</h3>
-            <input
-              type="text"
-              placeholder="Search games by player name"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
+    <Background showFlex={showGame}>
+      {showGame ? (
+        <Playground
+          gameId={gameId}
+          showGame={showGame}
+          setShowGame={setShowGame}
+          userDetails={userDetails}
+          className="playground-reset"
+        />
+      ) : (
+        <div className="dashboard">
+          <Welcome token={token} userDetails={userDetails} name={name} />
+          <div className="games-container-big">
+            <Games
+              token={token}
+              games={games}
+              handleCreateGame={handleCreateGame}
+              name={name}
+              handleJoinGame={handleJoinGame}
+              gameId={gameId}
             />
           </div>
-          <form onSubmit={handleCreateGame}>
-            <Button>Create Game</Button>
-          </form>
         </div>
-        <LogoutButton />
-      </div>
+      )}
     </Background>
   );
 };

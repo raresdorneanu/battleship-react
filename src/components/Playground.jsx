@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Grid from "./Grid";
 import Ship from "./Ship";
@@ -8,6 +7,9 @@ import ships from "../utils/shipData";
 import getGameDetails from "../api/GetGameDetailsApi";
 import GridAction from "./GridAction";
 import handleSendMapConfig from "../api/SendMapConfigApi";
+import "./Playground.scss";
+import Button from "./button/button.component";
+import "animate.css";
 
 const Playground = (props) => {
   const [shipSet, setShipSet] = useState(ships);
@@ -22,6 +24,7 @@ const Playground = (props) => {
   const token = localStorage.getItem("token");
   const [gameId, setGameId] = useState(props.gameId);
   const [myId, setMyId] = useState("");
+  const [finishMessage, setFinishMessage] = useState("");
 
   const handleMyId = () => {
     if (gameDetails) {
@@ -40,10 +43,6 @@ const Playground = (props) => {
       );
     }
   }, [gameDetails]);
-
-  useEffect(() => {
-    handleMyId();
-  }, [myId, gameDetails]);
 
   useEffect(() => {
     handleMyId();
@@ -99,33 +98,89 @@ const Playground = (props) => {
   };
 
   return (
-    <div>
-      <Grid
-        ships={shipSet}
-        onCellClick={handleCellClickWrapper}
-        activeShip={activeShip}
-        setShowGame={props.setShowGame}
-        gameId={gameId}
-        showGame={props.showGame}
-        setShips={setShipSet}
-        gameDetails={gameDetails}
-        myId={myId}
-      />
-      <div>{playerName === name ? <h2>Your turn!</h2> : null}</div>;
-      <GridAction
-        showGame={props.showGame}
-        setShowGame={props.setShowGame}
-        gameId={gameId}
-        onCellClick={handleCellClickWrapper}
-        gameDetails={gameDetails}
-        open={open}
-        setOpen={setOpen}
-        gridData={gridData}
-        setGridData={setGridData}
-        myId={myId}
-        playerName={playerName}
-        name={name}
-      />
+    <div
+      className={`playground-container ${
+        shipsCoord?.length > 0 ? "ships-placed" : ""
+      }`}
+    >
+      <h2 className="game-title">BATTLESHIP</h2>
+      <div
+        className="turn"
+        style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+      >
+        {finishMessage && <h3>{finishMessage}</h3>}
+        {playerName === name && gameDetails?.gameStatus !== "FINISHED" ? (
+          <h2>Your turn!</h2>
+        ) : null}
+      </div>
+      {gameDetails?.player2Id ? null : (
+        <p style={{ color: "#fff", fontSize: "24px" }}>Waiting for opponent</p>
+      )}
+      <div
+        className="pg-flex-container"
+        style={
+          gameDetails?.shipsCoord?.length > 0
+            ? { width: "100%" }
+            : { width: "90%" }
+        }
+      >
+        <div
+          className="pg-flex-left"
+          style={
+            gameDetails?.shipsCoord?.length > 0
+              ? { width: "50%" }
+              : { width: "0" }
+          }
+        >
+          {gameDetails?.shipsCoord?.length > 0 ? (
+            <GridAction
+              showGame={props.showGame}
+              setShowGame={props.setShowGame}
+              gameId={gameId}
+              onCellClick={handleCellClickWrapper}
+              gameDetails={gameDetails}
+              open={open}
+              setOpen={setOpen}
+              gridData={gridData}
+              setGridData={setGridData}
+              myId={myId}
+              playerName={playerName}
+              name={name}
+              shipsCoord={shipsCoord}
+            />
+          ) : null}
+        </div>
+        <div
+          className="pg-flex-right"
+          style={
+            gameDetails?.shipsCoord?.length > 0
+              ? { width: "80%" }
+              : { width: "100%" }
+          }
+        >
+          <Grid
+            ships={shipSet}
+            onCellClick={handleCellClickWrapper}
+            activeShip={activeShip}
+            setShowGame={props.setShowGame}
+            gameId={gameId}
+            showGame={props.showGame}
+            setShips={setShipSet}
+            gameDetails={gameDetails}
+            myId={myId}
+            finishMessage={finishMessage}
+            setFinishMessage={setFinishMessage}
+          />
+          {gameDetails?.shipsCoord?.length > 0 ? null : (
+            <Button onClick={sendMapConfig}>READY</Button>
+          )}
+          {gameDetails?.shipsCoord?.length > 0 ? null : (
+            <Button onClick={handleOrientationWrapper}>
+              Change orientation
+            </Button>
+          )}
+        </div>
+      </div>
       {gameDetails?.shipsCoord?.length > 0 ? null : (
         <Ship
           ships={shipSet}
@@ -136,36 +191,7 @@ const Playground = (props) => {
           setShowGame={props.setShowGame}
         />
       )}
-      <button onClick={handleOrientationWrapper}>Change orientation</button>
-      <button onClick={sendMapConfig}>READY</button>
-      <button onClick={handleBackToAllGames}>Back To All Games</button>
-      {gameDetails?.player2Id ? (
-        <div className="game-details">
-          <p style={{ color: "#000" }}>Id: {gameDetails?.id}</p>
-          <p style={{ color: "#000" }}>Player1Id: {gameDetails?.player1Id}</p>
-          <p style={{ color: "#000" }}>
-            Player1 Email: {gameDetails?.player1Email}
-          </p>
-          <p style={{ color: "#000" }}>Player2Id: {gameDetails?.player2Id}</p>
-          <p style={{ color: "#000" }}>
-            Player2 Email: {gameDetails?.player2Email}
-          </p>
-          <p style={{ color: "#000" }}>
-            Player to move:{" "}
-            {gameDetails?.playerToMoveId
-              ? gameDetails.player1Email.split("@")[0]
-              : gameDetails.player2Email.split("@")[0]}
-          </p>
-          <p>Moves: {JSON.stringify(gameDetails?.moves)}</p>
-          <p>Ships Coord: {JSON.stringify(gameDetails?.shipsCoord)}</p>
-          <p style={{ color: "#000" }}>
-            Game Status: {gameDetails?.gameStatus}
-          </p>
-          <p>It is {playerName}'s turn</p>
-        </div>
-      ) : (
-        <p style={{ color: "#fff", fontSize: "24px" }}>Waiting for opponent</p>
-      )}
+      <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
     </div>
   );
 };

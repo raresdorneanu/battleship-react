@@ -1,102 +1,103 @@
 import React, { useState } from "react";
-import "../styles/Game.scss";
-import joinGame from "../api/JoinGameApi";
-import Playground from "./Playground";
 import Slider from "react-slick";
+import Button from "./button/button.component";
+import LogoutButton from "./LogoutButton";
 
 const Games = (props) => {
-  const [showGame, setShowGame] = useState(false);
-  const [gameId, setGameId] = useState("");
-  const numSlides = props.filteredGames.length;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [name, setName] = useState(props.name);
   var settings = {
     dots: false,
     infinite: true,
     speed: 500,
-    rows: numSlides < 4 ? 1 : 2,
-    slidesToShow: numSlides < 4 ? numSlides : 4,
-    slidesToScroll: numSlides < 4 ? numSlides : 4,
+    rows: searchTerm ? 1 : 2,
+    slidesToShow: 4,
+    slidesToScroll: 4,
     responsive: [
       {
         breakpoint: 1200,
         settings: {
-          slidesToShow: numSlides < 4 ? numSlides : 3,
-          slidesToScroll: numSlides < 4 ? numSlides : 3,
+          slidesToShow: 3,
+          slidesToScroll: 3,
         },
       },
       {
-        breakpoint: 1100,
+        breakpoint: 1000,
         settings: {
-          slidesToShow: numSlides < 3 ? numSlides : 2,
-          slidesToScroll: numSlides < 3 ? numSlides : 2,
+          slidesToShow: 2,
+          slidesToScroll: 2,
         },
       },
       {
-        breakpoint: 800,
-        settings: {
-          slidesToShow: numSlides < 3 ? numSlides : 1,
-          slidesToScroll: numSlides < 3 ? numSlides : 1,
-        },
-      },
-      {
-        breakpoint: 700,
+        breakpoint: 600,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          rows: 1,
         },
       },
     ],
   };
 
-  const handleJoinGame = (gameId) => {
-    setGameId(gameId);
-    joinGame(props.token, gameId, setShowGame, showGame);
-  };
+  const filteredGames = props.games.filter((game) => {
+    if (!game.player1 && !game.player2) {
+      return false;
+    }
+    return (
+      game.player1?.email?.includes(searchTerm) ||
+      game.player2?.email?.includes(searchTerm)
+    );
+  });
+  const numSlides = filteredGames.length;
 
   return (
     <div className="dashboard-container">
-      {showGame ? (
-        <Playground
-          gameId={gameId}
-          showGame={showGame}
-          setShowGame={setShowGame}
-          userDetails={props.userDetails}
-        />
-      ) : (
-        <div>
-          <div className="games-container">
-            <Slider {...settings}>
-              {props.filteredGames.map((game) => (
-                <div className="game-wrapper">
-                  <div
-                    style={numSlides < 4 ? { width: "300px" } : null}
-                    className={`game-item ${
-                      game.player1 !== null && game.player2 === null
-                        ? "game-free"
-                        : "game-full"
-                    }`}
-                    key={game.id}
-                    onClick={() => handleJoinGame(game.id)}
-                  >
-                    <div className="game-info">
-                      <div className="game-item-player1">
-                        {game.player1 && game.player1.email && (
-                          <p>{game.player1.email.split("@")[0]}</p>
-                        )}
-                      </div>
-                      <div className="game-item-player2">
-                        {game.player2 && game.player2.email && (
-                          <p>{game.player2.email.split("@")[0]}</p>
-                        )}
-                      </div>
+      <div>
+        <div className="games-container">
+          <Slider {...settings}>
+            {filteredGames?.map((game) => (
+              <div className="game-wrapper" key={game.id}>
+                <div
+                  style={numSlides < 4 ? { width: "300px" } : null}
+                  className={`game-item ${
+                    game.player1 !== null && game.player2 === null
+                      ? "game-free"
+                      : "game-full"
+                  }`}
+                  onClick={() => props.handleJoinGame(game.id)}
+                >
+                  <div className="game-info">
+                    <div className="game-item-player1">
+                      {game.player1 && game.player1.email && (
+                        <p>{game.player1.email.split("@")[0]}</p>
+                      )}
+                    </div>
+                    <div className="game-item-player2">
+                      {game.player2 && game.player2.email && (
+                        <p>{game.player2.email.split("@")[0]}</p>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </Slider>
-          </div>
+              </div>
+            ))}
+          </Slider>
         </div>
-      )}
+        <div className="dash-bottom">
+          <div className="search-for-player">
+            <h3>Search for player:</h3>
+            <input
+              type="text"
+              placeholder="Search player by name"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
+          <form onSubmit={props.handleCreateGame}>
+            <Button>Create Game</Button>
+          </form>
+        </div>
+        <LogoutButton />
+      </div>
     </div>
   );
 };
