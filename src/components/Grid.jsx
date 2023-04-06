@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./GridMarks.scss";
+
 const Grid = (props) => {
   const token = localStorage.getItem("token");
   const [shipsCoord, setShipsCoord] = useState([]);
@@ -8,7 +9,6 @@ const Grid = (props) => {
   useEffect(() => {
     setShipsCoord(props.gameDetails?.shipsCoord);
     setMoves(props.gameDetails?.moves);
-    console.log(props.gameDetails?.shipsCoord?.length);
   }, [props.gameDetails]);
 
   let tempRows = [];
@@ -119,30 +119,32 @@ const Grid = (props) => {
   }
 
   return (
-    <div
-      className="grid-container-big"
-      style={
-        shipsCoord?.length > 0
-          ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
-          : null
-      }
-    >
-      <h2>Your Grid:</h2>
-      <div className="grid-container">
-        {grid.map((elem, index) => (
-          <div
-            className={`cell ${
-              props.gameDetails?.shipsCoord?.length <= 0 ? "cell-hover" : ""
-            }`}
-            key={index}
-            onClick={() => props.onCellClick(elem)}
-            style={{ backgroundColor: getCellBackgroundColor(elem) }}
-          >
-            {getCellContent(elem)}
-          </div>
-        ))}
+    <>
+      <div
+        className="grid-container-big"
+        style={
+          shipsCoord?.length > 0
+            ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
+            : null
+        }
+      >
+        <h2>Your Grid:</h2>
+        <div className="grid-container">
+          {grid.map((elem, index) => (
+            <div
+              className={`cell ${
+                props.gameDetails?.shipsCoord?.length <= 0 ? "cell-hover" : ""
+              }`}
+              key={index}
+              onClick={() => props.onCellClick(elem)}
+              style={{ backgroundColor: getCellBackgroundColor(elem) }}
+            >
+              {getCellContent(elem)}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

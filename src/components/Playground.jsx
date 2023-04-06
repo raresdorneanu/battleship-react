@@ -10,6 +10,8 @@ import handleSendMapConfig from "../api/SendMapConfigApi";
 import "./Playground.scss";
 import Button from "./button/button.component";
 import "animate.css";
+import ProgressBar from "./ProgressBar";
+import AccuracyBar from "./AccuracyBar";
 
 const Playground = (props) => {
   const [shipSet, setShipSet] = useState(ships);
@@ -113,24 +115,67 @@ const Playground = (props) => {
           <h2>Your turn!</h2>
         ) : null}
       </div>
+      <div className="bars-container">
+        <div className="op-name">
+          <p>
+            Your opponent:{" "}
+            <span>
+              {gameDetails?.player1Email?.split("@")[0] === name
+                ? gameDetails?.player2Email?.split("@")[0]
+                : gameDetails?.player1Email?.split("@")[0]}
+            </span>
+          </p>
+          <div
+            className="turn"
+            style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+          >
+            <h2
+              style={
+                playerName === name && gameDetails?.gameStatus !== "FINISHED"
+                  ? { display: "none" }
+                  : null
+              }
+            >
+              It is {playerName}'s Turn
+            </h2>
+          </div>
+        </div>
+        <div className="bars">
+          <ProgressBar myId={myId} gameDetails={gameDetails} />
+          <AccuracyBar myId={myId} gameDetails={gameDetails} />
+        </div>
+      </div>
       {gameDetails?.player2Id ? null : (
         <p style={{ color: "#fff", fontSize: "24px" }}>Waiting for opponent</p>
       )}
+      {gameDetails?.shipsCoord?.length > 0 ? null : (
+        <>
+          <Ship
+            ships={shipSet}
+            setActiveShip={setActiveShip}
+            token={token}
+            gameId={gameId}
+            showGame={props.showGame}
+            setShowGame={props.setShowGame}
+          />
+          <Button onClick={handleOrientationWrapper}>Change orientation</Button>
+        </>
+      )}
       <div
         className="pg-flex-container"
-        style={
-          gameDetails?.shipsCoord?.length > 0
-            ? { width: "100%" }
-            : { width: "90%" }
-        }
+        // style={
+        //   gameDetails?.shipsCoord?.length > 0
+        //     ? { width: "70%" }
+        //     : { width: "90%" }
+        // }
       >
         <div
           className="pg-flex-left"
-          style={
-            gameDetails?.shipsCoord?.length > 0
-              ? { width: "50%" }
-              : { width: "0" }
-          }
+          // style={
+          //   gameDetails?.shipsCoord?.length > 0
+          //     ? { width: "70%" }
+          //     : { width: "0" }
+          // }
         >
           {gameDetails?.shipsCoord?.length > 0 ? (
             <GridAction
@@ -152,11 +197,11 @@ const Playground = (props) => {
         </div>
         <div
           className="pg-flex-right"
-          style={
-            gameDetails?.shipsCoord?.length > 0
-              ? { width: "80%" }
-              : { width: "100%" }
-          }
+          // style={
+          //   gameDetails?.shipsCoord?.length > 0
+          //     ? { width: "80%" }
+          //     : { width: "100%" }
+          // }
         >
           <Grid
             ships={shipSet}
@@ -174,23 +219,9 @@ const Playground = (props) => {
           {gameDetails?.shipsCoord?.length > 0 ? null : (
             <Button onClick={sendMapConfig}>READY</Button>
           )}
-          {gameDetails?.shipsCoord?.length > 0 ? null : (
-            <Button onClick={handleOrientationWrapper}>
-              Change orientation
-            </Button>
-          )}
         </div>
       </div>
-      {gameDetails?.shipsCoord?.length > 0 ? null : (
-        <Ship
-          ships={shipSet}
-          setActiveShip={setActiveShip}
-          token={token}
-          gameId={gameId}
-          showGame={props.showGame}
-          setShowGame={props.setShowGame}
-        />
-      )}
+
       <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
     </div>
   );

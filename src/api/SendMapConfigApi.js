@@ -29,12 +29,10 @@ const handleSendMapConfig = async (
       }
     );
     if (response.status === 200) {
-      console.log(response);
+      console.log(response.data);
       setMapConfigSent(true);
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export default handleSendMapConfig;

@@ -10,17 +10,17 @@ const Welcome = (props) => {
       </h1>
       <div className="player-info">
         <div className="player-games-info">
-          <p>Games Played: {props.userDetails.gamesPlayed}</p>
+          <p>Games Played: {props.userDetails?.gamesPlayed}</p>
         </div>
         <div className="player-games-info">
-          <p>Games Won: {props.userDetails.gamesWon}</p>
+          <p>Games Won: {props.userDetails?.gamesWon}</p>
         </div>
         <div className="player-games-info">
-          <p>Games Lost: {props.userDetails.gamesLost}</p>
+          <p>Games Lost: {props.userDetails?.gamesLost}</p>
         </div>
         <div className="player-games-info">
           <p>
-            Currently Games Playing: {props.userDetails.currentlyGamesPlaying}
+            Currently Games Playing: {props.userDetails?.currentlyGamesPlaying}
           </p>
         </div>
       </div>

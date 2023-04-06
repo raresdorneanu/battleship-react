@@ -2,15 +2,26 @@ import React, { useState } from "react";
 import Slider from "react-slick";
 import Button from "./button/button.component";
 import LogoutButton from "./LogoutButton";
+import "./Playground.scss";
 
 const Games = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [name, setName] = useState(props.name);
+  const filteredGames = props.games.filter((game) => {
+    if (!game.player1 && !game.player2) {
+      return false;
+    }
+    return (
+      game.player1?.email?.includes(searchTerm) ||
+      game.player2?.email?.includes(searchTerm)
+    );
+  });
+  const numSlides = filteredGames.length;
   var settings = {
     dots: false,
     infinite: true,
     speed: 500,
-    rows: searchTerm ? 1 : 2,
+    rows: numSlides < 4 ? 1 : 2,
     slidesToShow: 4,
     slidesToScroll: 4,
     responsive: [
@@ -38,28 +49,29 @@ const Games = (props) => {
     ],
   };
 
-  const filteredGames = props.games.filter((game) => {
-    if (!game.player1 && !game.player2) {
-      return false;
-    }
-    return (
-      game.player1?.email?.includes(searchTerm) ||
-      game.player2?.email?.includes(searchTerm)
-    );
-  });
-  const numSlides = filteredGames.length;
-
   return (
     <div className="dashboard-container">
       <div>
         <div className="games-container">
           <Slider {...settings}>
-            {filteredGames?.map((game) => (
+            {filteredGames?.map((game, index) => (
               <div className="game-wrapper" key={game.id}>
+                <span className="game-number">{index + 1}</span>,{" "}
+                <p className="game-status-now">
+                  {game.status === "MAP_CONFIG"
+                    ? "CONFIGURING..."
+                    : game.status === "CREATED"
+                    ? "JOIN NOW"
+                    : game.status === "ACTIVE"
+                    ? "PLAYING"
+                    : "GAME ENDED"}
+                </p>
                 <div
                   style={numSlides < 4 ? { width: "300px" } : null}
                   className={`game-item ${
-                    game.player1 !== null && game.player2 === null
+                    game.status === "FINISHED"
+                      ? "game-finished"
+                      : game.player1 !== null && game.player2 === null
                       ? "game-free"
                       : "game-full"
                   }`}

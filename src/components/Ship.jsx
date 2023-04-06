@@ -40,15 +40,7 @@ const Ship = (props) => {
               onClick={() => handleShipClick(ship.id)}
             >
               <div className="ship-name">
-                <p>
-                  {ship.size === 2
-                    ? "Destroyer"
-                    : ship.size === 3
-                    ? "Submarine"
-                    : ship.size === 4
-                    ? "Battleship"
-                    : "Carrier"}
-                </p>
+                <p>{ship?.size ? ship.shipName : null}</p>
               </div>
               <div className="ship-position">
                 <span>{ship.position !== null ? <p>PLACED</p> : null}</span>

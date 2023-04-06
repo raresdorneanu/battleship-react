@@ -7,13 +7,13 @@ const GridAction = (props) => {
   const [moves, setMoves] = useState(props.gameDetails?.moves);
   const [heartBeat, setHeartBeat] = useState(false);
   const token = localStorage.getItem("token");
-  const animatedClassName = `animate__animated animate__slow ${
-    props.playerName === props.name &&
-    props.gameDetails?.gameStatus !== "FINISHED" &&
-    heartBeat
-      ? "animate__heartBeat"
-      : ""
-  }`;
+  // const animatedClassName = `animate__animated animate__slow ${
+  //   props.playerName === props.name &&
+  //   props.gameDetails?.gameStatus !== "FINISHED" &&
+  //   heartBeat
+  //     ? "animate__heartBeat"
+  //     : ""
+  // }`;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -117,11 +117,11 @@ const GridAction = (props) => {
           { cellCoordinate, result: response.data.result },
         ]);
         setAlreadyStruckCells([...alreadyStruckCells, cellCoordinate]);
-        setStrikeResults({
-          ...strikeResults,
-          [cellCoordinate]: response.data.result,
-        });
-        console.log(strikeResults);
+        // setStrikeResults({
+        //   ...strikeResults,
+        //   [cellCoordinate]: response.data.result,
+        // });
+        // console.log(strikeResults);
       }
     } catch (error) {
       if (props.gameDetails?.shipsCoord?.length > 0) {
@@ -131,49 +131,52 @@ const GridAction = (props) => {
   };
 
   return (
-    <div
-      className="grid-container-big"
-      style={
-        props.shipsCoord?.length > 0
-          ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
-          : null
-      }
-    >
-      <h2>Opponent Grid:</h2>
-      <div className={`grid-container action-grid ${animatedClassName}`}>
-        {grid.map((elem, index) => {
-          if (
-            props.gameDetails &&
-            props.gameDetails.moves &&
-            props.gameDetails.moves.map(
-              (move) =>
-                move.y + "-" + move.x === elem && move.playerId === props.myId
-            )
-          ) {
-            return (
-              <div key={index}>
-                <div
-                  className={`cell ${
-                    props.gameDetails?.shipsCoord?.length > 0 &&
-                    props.gameDetails?.gameStatus !== "FINISHED"
-                      ? "cell-hover"
-                      : ""
-                  }`}
-                  key={index}
-                  onClick={() => onStrike(elem)}
-                >
-                  {getCellBackgroundColor(elem) === "red" ? (
-                    <div className="hit-mark-op"></div>
-                  ) : getCellBackgroundColor(elem) === "blue" ? (
-                    <div className="miss-mark-op"></div>
-                  ) : null}
+    <>
+      <div
+        className="grid-container-big"
+        style={
+          props.shipsCoord?.length > 0
+            ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
+            : null
+        }
+      >
+        <h2>Opponent Grid:</h2>
+        <div className="grid-container action-grid">
+          {/* <div className={`grid-container action-grid ${animatedClassName}`}> */}
+          {grid.map((elem, index) => {
+            if (
+              props.gameDetails &&
+              props.gameDetails.moves &&
+              props.gameDetails.moves.map(
+                (move) =>
+                  move.y + "-" + move.x === elem && move.playerId === props.myId
+              )
+            ) {
+              return (
+                <div key={index}>
+                  <div
+                    className={`cell ${
+                      props.gameDetails?.shipsCoord?.length > 0 &&
+                      props.gameDetails?.gameStatus !== "FINISHED"
+                        ? "cell-hover"
+                        : ""
+                    }`}
+                    key={index}
+                    onClick={() => onStrike(elem)}
+                  >
+                    {getCellBackgroundColor(elem) === "red" ? (
+                      <div className="hit-mark-op"></div>
+                    ) : getCellBackgroundColor(elem) === "blue" ? (
+                      <div className="miss-mark-op"></div>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            );
-          }
-        })}
+              );
+            }
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
