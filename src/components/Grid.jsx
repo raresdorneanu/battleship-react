@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./GridMarks.scss";
+import "../styles/GridMarks.scss";
 
 const Grid = (props) => {
   const token = localStorage.getItem("token");

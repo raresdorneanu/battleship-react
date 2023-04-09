@@ -7,7 +7,7 @@ import ships from "../utils/shipData";
 import getGameDetails from "../api/GetGameDetailsApi";
 import GridAction from "./GridAction";
 import handleSendMapConfig from "../api/SendMapConfigApi";
-import "./Playground.scss";
+import "../styles/Playground.scss";
 import Button from "./button/button.component";
 import "animate.css";
 import ProgressBar from "./ProgressBar";
@@ -27,6 +27,13 @@ const Playground = (props) => {
   const [gameId, setGameId] = useState(props.gameId);
   const [myId, setMyId] = useState("");
   const [finishMessage, setFinishMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, [loading]);
 
   const handleMyId = () => {
     if (gameDetails) {
@@ -100,145 +107,157 @@ const Playground = (props) => {
   };
 
   return (
-    <div
-      className={`playground-container ${
-        shipsCoord?.length > 0 ? "ships-placed" : ""
-      }`}
-    >
-      <h2 className="game-title">BATTLESHIP</h2>
+    <>
       <div
-        className="turn"
-        style={{ display: shipsCoord?.length > 0 ? null : "none" }}
-      >
-        {finishMessage && <h3>{finishMessage}</h3>}
-        {playerName === name && gameDetails?.gameStatus !== "FINISHED" ? (
-          <h2>Your turn!</h2>
-        ) : null}
-      </div>
-      <div
-        className="bars-container"
-        style={
-          gameDetails?.shipsCoord?.length <= 0 ||
-          gameDetails?.gameStatus === "CREATED"
-            ? { display: "none" }
-            : { display: "flex" }
-        }
-      >
-        <div className="op-name">
-          <p>
-            Your opponent:{" "}
-            <span>
-              {gameDetails?.player1Email?.split("@")[0] === name
-                ? gameDetails?.player2Email?.split("@")[0]
-                : gameDetails?.player1Email?.split("@")[0]}
-            </span>
-          </p>
-          <div
-            className="turn"
-            style={{ display: shipsCoord?.length > 0 ? null : "none" }}
-          >
-            <h2
-              style={
-                playerName === name && gameDetails?.gameStatus !== "FINISHED"
-                  ? { display: "none" }
-                  : null
-              }
-            >
-              It is {playerName}'s Turn
-            </h2>
-          </div>
-        </div>
-        <div className="bars">
-          <ProgressBar myId={myId} gameDetails={gameDetails} />
-          <AccuracyBar myId={myId} gameDetails={gameDetails} />
-        </div>
-      </div>
-      {gameDetails?.player2Id ? null : (
-        <p className="waiting">Waiting for opponent</p>
-      )}
-      {gameDetails?.shipsCoord?.length > 0 ? null : (
-        <>
-          <Ship
-            ships={shipSet}
-            setActiveShip={setActiveShip}
-            token={token}
-            gameId={gameId}
-            showGame={props.showGame}
-            setShowGame={props.setShowGame}
-          />
-          <div className="ships-not-placed-button-flex">
-            <Button
-              className="change-orientation"
-              onClick={handleOrientationWrapper}
-            >
-              Change orientation
-            </Button>
-
-            {gameDetails?.shipsCoord?.length > 0 ? null : (
-              <Button onClick={sendMapConfig}>READY</Button>
-            )}
-          </div>
-        </>
-      )}
-      <div
-        className="pg-flex-container"
-        // style={
-        //   gameDetails?.shipsCoord?.length > 0
-        //     ? { width: "70%" }
-        //     : { width: "90%" }
-        // }
+        className={`playground-container ${
+          shipsCoord?.length > 0 ? "ships-placed" : ""
+        }`}
+        style={loading ? { position: "absolute" } : { position: "relative" }}
       >
         <div
-          className="pg-flex-left"
-          style={
-            gameDetails?.shipsCoord?.length > 0
-              ? { display: "block" }
-              : { display: "none" }
-          }
+          style={loading ? { display: "flex" } : { display: "none" }}
+          className="loading-game"
         >
-          {gameDetails?.shipsCoord?.length > 0 ? (
-            <GridAction
-              showGame={props.showGame}
-              setShowGame={props.setShowGame}
-              gameId={gameId}
-              onCellClick={handleCellClickWrapper}
-              gameDetails={gameDetails}
-              open={open}
-              setOpen={setOpen}
-              gridData={gridData}
-              setGridData={setGridData}
-              myId={myId}
-              playerName={playerName}
-              name={name}
-              shipsCoord={shipsCoord}
-            />
+          <span>Loading...</span>
+        </div>
+
+        <h2 className="game-title">BATTLESHIP</h2>
+        <div
+          className="turn"
+          style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+        >
+          {finishMessage && <h3>{finishMessage}</h3>}
+          {playerName === name && gameDetails?.gameStatus !== "FINISHED" ? (
+            <h2>Your turn!</h2>
           ) : null}
         </div>
         <div
-          className="pg-flex-right"
+          className="bars-container"
           style={
-            gameDetails?.shipsCoord?.length > 0
-              ? { paddingRight: "200px" }
-              : { paddingRight: "0" }
+            gameDetails?.shipsCoord?.length <= 0 ||
+            gameDetails?.gameStatus === "CREATED"
+              ? { display: "none" }
+              : { display: "flex" }
           }
         >
-          <Grid
-            ships={shipSet}
-            onCellClick={handleCellClickWrapper}
-            activeShip={activeShip}
-            setShowGame={props.setShowGame}
-            gameId={gameId}
-            showGame={props.showGame}
-            setShips={setShipSet}
-            gameDetails={gameDetails}
-            myId={myId}
-            finishMessage={finishMessage}
-            setFinishMessage={setFinishMessage}
-          />
+          <div className="op-name">
+            <p>
+              Your opponent:{" "}
+              <span>
+                {gameDetails?.player1Email?.split("@")[0] === name
+                  ? gameDetails?.player2Email?.split("@")[0]
+                  : gameDetails?.player1Email?.split("@")[0]}
+              </span>
+            </p>
+            <div
+              className="turn"
+              style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+            >
+              <h2
+                style={
+                  playerName === name && gameDetails?.gameStatus !== "FINISHED"
+                    ? { display: "none" }
+                    : null
+                }
+              >
+                It is {playerName}'s Turn
+              </h2>
+            </div>
+          </div>
+          <div className="bars">
+            <ProgressBar myId={myId} gameDetails={gameDetails} />
+            <AccuracyBar myId={myId} gameDetails={gameDetails} />
+          </div>
         </div>
+        {gameDetails?.player2Id ? null : (
+          <p className="waiting">Waiting for opponent</p>
+        )}
+        {gameDetails?.shipsCoord?.length > 0 ? null : (
+          <>
+            <Ship
+              ships={shipSet}
+              setActiveShip={setActiveShip}
+              token={token}
+              gameId={gameId}
+              showGame={props.showGame}
+              setShowGame={props.setShowGame}
+            />
+            <div className="ships-not-placed-button-flex">
+              <Button
+                className="change-orientation"
+                onClick={handleOrientationWrapper}
+              >
+                Change orientation
+              </Button>
+
+              {gameDetails?.shipsCoord?.length > 0 ||
+              gameDetails.player1Id === null ||
+              gameDetails.player2Id === null ? null : (
+                <Button onClick={sendMapConfig}>READY</Button>
+              )}
+            </div>
+          </>
+        )}
+        <div
+          className="pg-flex-container"
+          // style={
+          //   gameDetails?.shipsCoord?.length > 0
+          //     ? { width: "70%" }
+          //     : { width: "90%" }
+          // }
+        >
+          <div
+            className="pg-flex-left"
+            style={
+              gameDetails?.shipsCoord?.length > 0
+                ? { display: "block" }
+                : { display: "none" }
+            }
+          >
+            {gameDetails?.shipsCoord?.length > 0 ? (
+              <GridAction
+                showGame={props.showGame}
+                setShowGame={props.setShowGame}
+                gameId={gameId}
+                onCellClick={handleCellClickWrapper}
+                gameDetails={gameDetails}
+                open={open}
+                setOpen={setOpen}
+                gridData={gridData}
+                setGridData={setGridData}
+                myId={myId}
+                playerName={playerName}
+                name={name}
+                shipsCoord={shipsCoord}
+              />
+            ) : null}
+          </div>
+          <div
+            className="pg-flex-right"
+            style={
+              gameDetails?.shipsCoord?.length > 0
+                ? { paddingRight: "200px" }
+                : { paddingRight: "0" }
+            }
+          >
+            <Grid
+              ships={shipSet}
+              onCellClick={handleCellClickWrapper}
+              activeShip={activeShip}
+              setShowGame={props.setShowGame}
+              gameId={gameId}
+              showGame={props.showGame}
+              setShips={setShipSet}
+              gameDetails={gameDetails}
+              myId={myId}
+              finishMessage={finishMessage}
+              setFinishMessage={setFinishMessage}
+            />
+          </div>
+        </div>
+        <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
       </div>
-      <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
-    </div>
+    </>
   );
 };
 export default Playground;

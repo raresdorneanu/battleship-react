@@ -22,7 +22,7 @@ const useSignInApi = () => {
       );
       if (response.status === 200) {
         localStorage.setItem("token", response.data.accessToken);
-        console.log(localStorage.getItem("token"));
+
         navigate("/dashboard");
       }
     } catch (error) {

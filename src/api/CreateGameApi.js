@@ -10,8 +10,6 @@ const createGame = async (token) => {
     if (response.status === 200) {
       return response.data;
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 export default createGame;

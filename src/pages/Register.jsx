@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Background from "../components/background/background.component";
 import RegisterForm from "../components/RegisterForm";
 import useRegisterApi from "../hooks/RegisterHook";
+import RegisterContext from "../context/RegisterContext";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,20 +22,24 @@ const Register = () => {
   };
 
   return (
-    <Background>
-      <div className="sign-in-div">
-        <RegisterForm
-          handleSubmit={handleSubmitRegister}
-          errorMessage={errorMessage}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          successMessage={successMessage}
-          backToSignIn={backToSignIn}
-        />
-      </div>
-    </Background>
+    <RegisterContext.Provider
+      value={{
+        email,
+        setEmail,
+        password,
+        setPassword,
+        successMessage,
+        errorMessage,
+        handleSubmitRegister,
+        backToSignIn,
+      }}
+    >
+      <Background>
+        <div className="sign-in-div">
+          <RegisterForm />
+        </div>
+      </Background>
+    </RegisterContext.Provider>
   );
 };
 

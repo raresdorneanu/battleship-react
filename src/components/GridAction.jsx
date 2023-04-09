@@ -126,7 +126,7 @@ const GridAction = (props) => {
       );
       if (response.status === 200) {
         props.setOpen(false);
-        console.log(cellCoordinate);
+
         // props.setGridData([
         //   ...props.gridData,
         //   { cellCoordinate, result: response.data.result },

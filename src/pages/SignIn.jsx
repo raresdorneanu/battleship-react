@@ -1,5 +1,6 @@
 import Background from "../components/background/background.component";
 import SignInForm from "../components/SignInForm";
+import SignInContext from "../context/SignInContext";
 import useSignInApi from "../hooks/SignInHook";
 
 const SignIn = () => {
@@ -19,19 +20,23 @@ const SignIn = () => {
   };
 
   return (
-    <Background>
-      <div className="sign-in-div">
-        <SignInForm
-          handleSubmit={handleSubmitSignIn}
-          errorMessage={errorMessage}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          enterRegister={handleShowRegister}
-        />
-      </div>
-    </Background>
+    <SignInContext.Provider
+      value={{
+        email,
+        setEmail,
+        password,
+        setPassword,
+        errorMessage,
+        handleSubmitSignIn,
+        handleShowRegister,
+      }}
+    >
+      <Background>
+        <div className="sign-in-div">
+          <SignInForm />
+        </div>
+      </Background>
+    </SignInContext.Provider>
   );
 };
 

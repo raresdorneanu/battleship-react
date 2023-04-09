@@ -72,7 +72,6 @@ export const handleCellClick = (
           })
         );
         var shipPosition = pos;
-        console.log(shipPosition);
       } else {
         alert("You can't overlap ships");
       }

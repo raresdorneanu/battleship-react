@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import handleGetUserDetails from "../api/GetUserDetailsApi";
-import "./Welcome.scss";
+import "../styles/Welcome.scss";
 
 const Welcome = (props) => {
   return (

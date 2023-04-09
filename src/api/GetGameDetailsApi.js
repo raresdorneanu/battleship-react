@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const getGameDetails = async (token, gameId, setShowGame, showGame) => {
+const getGameDetails = async (token, gameId, setShowGame) => {
   try {
     const response = await axios.get(
       `https://react-labs.softbinator.com/game/${gameId}`,
@@ -29,15 +29,17 @@ const getGameDetails = async (token, gameId, setShowGame, showGame) => {
         player2Email: response.data.player2?.email,
         playerToMoveId: response.data.playerToMoveId,
         gameStatus: response.data.status,
+        moves: gameDetails.moves,
+        shipsCoord: gameDetails.shipsCoord,
       };
 
-      if (Array.isArray(gameDetails.moves)) {
-        result.moves = gameDetails.moves;
-      }
+      // if (Array.isArray(gameDetails.moves)) {
+      //   result.moves = ;
+      // }
 
-      if (Array.isArray(gameDetails.shipsCoord)) {
-        result.shipsCoord = gameDetails.shipsCoord;
-      }
+      // if (Array.isArray(gameDetails.shipsCoord)) {
+      //   result.shipsCoord = gameDetails.shipsCoord;
+      // }
 
       return result;
     }

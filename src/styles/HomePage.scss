@@ -60,14 +60,12 @@
 .sign-in-div {
   width: 55%;
 }
-.response-message {
+.success-message {
   font-family: "Poppins", sans-serif !important;
-  font-size: 42px !important;
+  font-size: 25px !important;
   font-weight: bold;
   color: #fff;
-  position: absolute;
-  top: 10px;
-  left: calc(50% - 288.4px);
+  font-weight: 400;
 }
 
 .error-message {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import Button from "./button/button.component";
 import LogoutButton from "./LogoutButton";
-import "./Playground.scss";
+import "../styles/Playground.scss";
 import createGame from "../api/CreateGameApi";
 
 const Games = (props) => {
@@ -67,7 +67,6 @@ const Games = (props) => {
           <Slider {...settings}>
             {filteredGames?.map((game, index) => (
               <div className="game-wrapper" key={game.id}>
-                {console.log(game)}
                 <span className="game-number">{index + 1}</span>,{" "}
                 <p className="game-status-now">
                   {game.status === "MAP_CONFIG"

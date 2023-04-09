@@ -26,7 +26,6 @@ const Ship = (props) => {
   const handleShipClick = (shipId) => {
     props.setActiveShip(shipId);
     setActiveShip(shipId);
-    console.log(activeShip);
   };
 
   return (

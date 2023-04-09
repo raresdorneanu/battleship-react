@@ -13,13 +13,10 @@ const handleGetUserDetails = async (token) => {
         gamesPlayed: response.data.gamesPlayed,
         gamesWon: response.data.gamesWon,
         gamesLost: response.data.gamesLost,
-        gamesPlayed: response.data.gamesPlayed,
         currentlyGamesPlaying: response.data.currentlyGamesPlaying,
       };
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export default handleGetUserDetails;

@@ -17,13 +17,14 @@ const useRegisterApi = () => {
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log(response.data);
+
       if (response.status === 200) {
         setSuccessMessage("Registered Successfully!");
-        navigate("/signin");
+        setTimeout(() => {
+          navigate("/signin");
+        }, 3000);
       }
     } catch (error) {
-      console.log(error);
       setErrorMessage("Email already in use. Please choose a different email.");
     }
   };

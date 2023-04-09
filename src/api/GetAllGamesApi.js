@@ -9,9 +9,7 @@ const getAllGames = async (token) => {
     if (response.status === 200) {
       return response.data.games;
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export default getAllGames;

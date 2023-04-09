@@ -29,11 +29,11 @@ const handleSendMapConfig = async (
       }
     );
     if (response.status === 200) {
-      console.log(response.data);
       setMapConfigSent(true);
     }
   } catch (error) {
     alert("You need to place your ships first");
+    console.log(error);
   }
 };
 

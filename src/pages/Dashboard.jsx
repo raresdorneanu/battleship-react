@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Games from "../components/Games";
 import Welcome from "../components/Welcome";
-import "./Dashboard.scss";
-import createGame from "../api/CreateGameApi";
+import "../styles/Dashboard.scss";
 import handleGetUserDetails from "../api/GetUserDetailsApi";
 import getAllGames from "../api/GetAllGamesApi";
 import Background from "../components/background/background.component";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Background from "../components/background/background.component";
 import Button from "../components/button/button.component";
-import "./HomePage.scss";
+import "../styles/HomePage.scss";
 const HomePage = () => {
   const navigate = useNavigate();
   const navigateSignIn = () => {
