@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import Button from "./button/button.component";
 import LogoutButton from "./LogoutButton";
 import "./Playground.scss";
+import createGame from "../api/CreateGameApi";
 
 const Games = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [name, setName] = useState(props.name);
+  const name = props.name;
+
   const filteredGames = props.games.filter((game) => {
     if (!game.player1 && !game.player2) {
       return false;
@@ -24,6 +26,7 @@ const Games = (props) => {
     rows: numSlides < 4 ? 1 : 2,
     slidesToShow: 4,
     slidesToScroll: 4,
+    className: searchTerm ? "slider-hide-cloned" : "",
     responsive: [
       {
         breakpoint: 1200,
@@ -42,11 +45,19 @@ const Games = (props) => {
       {
         breakpoint: 600,
         settings: {
+          rows: 1,
           slidesToShow: 1,
           slidesToScroll: 1,
         },
       },
     ],
+  };
+
+  const handleCreateGame = () => {
+    const newGame = createGame(props.token);
+    if (newGame) {
+      props.setGames((prevGames) => [...prevGames, newGame]);
+    }
   };
 
   return (
@@ -56,6 +67,7 @@ const Games = (props) => {
           <Slider {...settings}>
             {filteredGames?.map((game, index) => (
               <div className="game-wrapper" key={game.id}>
+                {console.log(game)}
                 <span className="game-number">{index + 1}</span>,{" "}
                 <p className="game-status-now">
                   {game.status === "MAP_CONFIG"
@@ -104,9 +116,9 @@ const Games = (props) => {
               onChange={(event) => setSearchTerm(event.target.value)}
             />
           </div>
-          <form onSubmit={props.handleCreateGame}>
-            <Button>Create Game</Button>
-          </form>
+          <Button className="create-button" onClick={handleCreateGame}>
+            Create Game
+          </Button>
         </div>
         <LogoutButton />
       </div>

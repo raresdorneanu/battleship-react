@@ -85,6 +85,18 @@ const GridAction = (props) => {
     }
     return "";
   };
+  useEffect(() => {
+    const playerMoves = moves.filter((move) => move.playerId === props.myId);
+    const newStruckCells = playerMoves.map((move) => `${move.y}-${move.x}`);
+
+    const uniqueStruckCells = newStruckCells.filter(
+      (cell) => !alreadyStruckCells.includes(cell)
+    );
+
+    if (uniqueStruckCells.length > 0) {
+      setAlreadyStruckCells((prev) => [...prev, ...uniqueStruckCells]);
+    }
+  }, [moves, props.gameDetails, alreadyStruckCells]);
 
   const onStrike = async (cellCoordinate) => {
     // Check if the cell has already been struck
@@ -92,7 +104,10 @@ const GridAction = (props) => {
       alert("That cell has been struck");
       return;
     }
+    // Check the moves array for strikes made by the player
+    // If the player has already struck this cell, update the state and return
 
+    // Make the API request
     const [row, col] = cellCoordinate.split("-");
     const requestBody = {
       x: col,
@@ -111,22 +126,22 @@ const GridAction = (props) => {
       );
       if (response.status === 200) {
         props.setOpen(false);
-        console.log(response.data);
-        props.setGridData([
-          ...props.gridData,
-          { cellCoordinate, result: response.data.result },
-        ]);
-        setAlreadyStruckCells([...alreadyStruckCells, cellCoordinate]);
-        // setStrikeResults({
-        //   ...strikeResults,
-        //   [cellCoordinate]: response.data.result,
-        // });
-        // console.log(strikeResults);
+        console.log(cellCoordinate);
+        // props.setGridData([
+        //   ...props.gridData,
+        //   { cellCoordinate, result: response.data.result },
+        // ]);
+        // setAlreadyStruckCells([...alreadyStruckCells, cellCoordinate]);
+        if (!alreadyStruckCells.includes(cellCoordinate)) {
+          setAlreadyStruckCells((prev) => [...prev, cellCoordinate]);
+        }
       }
     } catch (error) {
       if (props.gameDetails?.shipsCoord?.length > 0) {
-        alert("Wait for other player to take his turn!");
-      } else alert("Please place your ships and get ready before attack!");
+        alert("Wait for other player to take their turn!");
+      } else {
+        alert("Please place your ships and get ready before attacking!");
+      }
     }
   };
 

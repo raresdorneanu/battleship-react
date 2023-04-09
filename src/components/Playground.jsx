@@ -115,7 +115,15 @@ const Playground = (props) => {
           <h2>Your turn!</h2>
         ) : null}
       </div>
-      <div className="bars-container">
+      <div
+        className="bars-container"
+        style={
+          gameDetails?.shipsCoord?.length <= 0 ||
+          gameDetails?.gameStatus === "CREATED"
+            ? { display: "none" }
+            : { display: "flex" }
+        }
+      >
         <div className="op-name">
           <p>
             Your opponent:{" "}
@@ -146,7 +154,7 @@ const Playground = (props) => {
         </div>
       </div>
       {gameDetails?.player2Id ? null : (
-        <p style={{ color: "#fff", fontSize: "24px" }}>Waiting for opponent</p>
+        <p className="waiting">Waiting for opponent</p>
       )}
       {gameDetails?.shipsCoord?.length > 0 ? null : (
         <>
@@ -158,7 +166,18 @@ const Playground = (props) => {
             showGame={props.showGame}
             setShowGame={props.setShowGame}
           />
-          <Button onClick={handleOrientationWrapper}>Change orientation</Button>
+          <div className="ships-not-placed-button-flex">
+            <Button
+              className="change-orientation"
+              onClick={handleOrientationWrapper}
+            >
+              Change orientation
+            </Button>
+
+            {gameDetails?.shipsCoord?.length > 0 ? null : (
+              <Button onClick={sendMapConfig}>READY</Button>
+            )}
+          </div>
         </>
       )}
       <div
@@ -171,11 +190,11 @@ const Playground = (props) => {
       >
         <div
           className="pg-flex-left"
-          // style={
-          //   gameDetails?.shipsCoord?.length > 0
-          //     ? { width: "70%" }
-          //     : { width: "0" }
-          // }
+          style={
+            gameDetails?.shipsCoord?.length > 0
+              ? { display: "block" }
+              : { display: "none" }
+          }
         >
           {gameDetails?.shipsCoord?.length > 0 ? (
             <GridAction
@@ -197,11 +216,11 @@ const Playground = (props) => {
         </div>
         <div
           className="pg-flex-right"
-          // style={
-          //   gameDetails?.shipsCoord?.length > 0
-          //     ? { width: "80%" }
-          //     : { width: "100%" }
-          // }
+          style={
+            gameDetails?.shipsCoord?.length > 0
+              ? { paddingRight: "200px" }
+              : { paddingRight: "0" }
+          }
         >
           <Grid
             ships={shipSet}
@@ -216,12 +235,8 @@ const Playground = (props) => {
             finishMessage={finishMessage}
             setFinishMessage={setFinishMessage}
           />
-          {gameDetails?.shipsCoord?.length > 0 ? null : (
-            <Button onClick={sendMapConfig}>READY</Button>
-          )}
         </div>
       </div>
-
       <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
     </div>
   );

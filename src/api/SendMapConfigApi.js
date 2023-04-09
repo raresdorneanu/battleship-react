@@ -32,7 +32,9 @@ const handleSendMapConfig = async (
       console.log(response.data);
       setMapConfigSent(true);
     }
-  } catch (error) {}
+  } catch (error) {
+    alert("You need to place your ships first");
+  }
 };
 
 export default handleSendMapConfig;

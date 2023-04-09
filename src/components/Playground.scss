@@ -70,7 +70,10 @@
     margin: auto;
   }
 }
-
+.grid-container-big.ships-not-placed {
+  width: 80% !important;
+  margin: 20px 0;
+}
 .cell {
   border: 1px solid #fff;
   display: flex;
@@ -81,7 +84,9 @@
   cursor: pointer;
   font-size: 24px;
 }
-
+.change-orientation {
+  margin-right: 20px;
+}
 .cell-hover {
   &:hover {
     background-color: limegreen;
@@ -169,6 +174,11 @@
   margin-top: 20px;
 }
 
+.waiting {
+  color: "#fff";
+  font-size: 24px;
+}
+
 // @media only screen and (max-width: 1750px) {
 //   .ships-placed .pg-flex-container {
 //     width: 80% !important;
@@ -209,6 +219,9 @@
   // }
   .ships-placed .cell {
     padding: 17px !important;
+  }
+  .grid-container-big.ships-not-placed {
+    width: 100% !important;
   }
 }
 
@@ -253,6 +266,12 @@
   .grid-container-big {
     width: auto !important;
   }
+  .ships-placed .op-name {
+    width: 60%;
+  }
+  .ships-placed .cell {
+    padding: 15px !important;
+  }
 }
 
 @media only screen and (max-width: 750px) {
@@ -294,28 +313,74 @@
   .grid-container-big {
     width: auto !important;
   }
+  .ship-item-container {
+    width: 100%;
+  }
 }
 
 @media only screen and (max-width: 600px) {
   .ships-placed .bars-container {
     margin-bottom: 40px;
+    .op-name {
+      width: 100%;
+    }
+    .bars {
+      width: 80%;
+    }
+  }
+  .ships-not-placed-button-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .change-orientation {
+    margin: auto;
   }
   .ships-placed .grid-container-big {
     transform: initial !important;
+    h2 {
+      font-size: 22px;
+    }
   }
   .ships-placed .cell {
     padding: 15px;
+  }
+  .ships-placed .pg-flex-right {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .ships-placed .bars-container {
+    flex-direction: column;
   }
   .cell {
     padding: 15px;
   }
 }
 
+@media only screen and (max-width: 500px) {
+  .ship-item img {
+    display: none;
+  }
+  .ship-item {
+    width: 100px;
+    height: 60px;
+  }
+  .styled-button {
+    font-size: 14px;
+    margin: 10px 0;
+    padding: 10px 20px;
+  }
+  .bars-container p {
+    font-size: 16px;
+  }
+}
+
 @media only screen and (max-width: 400px) {
   .ships-placed .cell {
-    padding: 10px !important;
+    padding: 12px !important;
   }
   .cell {
-    padding: 10px !important;
+    padding: 12px !important;
   }
 }

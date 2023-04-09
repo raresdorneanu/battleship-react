@@ -36,10 +36,6 @@ const Dashboard = () => {
     seeGames();
   }, [games]);
 
-  const handleCreateGame = () => {
-    createGame(token, setGames);
-  };
-
   const handleJoinGame = (gameId) => {
     setGameId(gameId);
     joinGame(token, gameId, setShowGame, showGame, name);
@@ -62,10 +58,10 @@ const Dashboard = () => {
             <Games
               token={token}
               games={games}
-              handleCreateGame={handleCreateGame}
               name={name}
               handleJoinGame={handleJoinGame}
               gameId={gameId}
+              setGames={setGames}
             />
           </div>
         </div>

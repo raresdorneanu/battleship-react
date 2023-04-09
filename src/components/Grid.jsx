@@ -121,7 +121,12 @@ const Grid = (props) => {
   return (
     <>
       <div
-        className="grid-container-big"
+        className={`grid-container-big ${
+          props.gameDetails?.shipsCoord?.length <= 0 ||
+          props.gameDetails?.gameStatus === "CREATED"
+            ? "ships-not-placed"
+            : ""
+        }`}
         style={
           shipsCoord?.length > 0
             ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }

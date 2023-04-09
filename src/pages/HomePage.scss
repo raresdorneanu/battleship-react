@@ -78,3 +78,33 @@
   position: relative;
   font-weight: 400;
 }
+
+@media only screen and (max-width: 1000px) {
+  .homepage-bg-image {
+    justify-content: center !important;
+  }
+  .homepage-start {
+    width: 100%;
+    .form-account {
+      width: 90%;
+      margin: auto;
+    }
+  }
+  .container {
+    h2 {
+      font-size: 48px;
+    }
+  }
+}
+@media only screen and (max-width: 600px) {
+  .sign-in-div {
+    width: 90%;
+  }
+  .container {
+    min-width: 100% !important;
+    max-width: inherit;
+    h2 {
+      font-size: 38px;
+    }
+  }
+}

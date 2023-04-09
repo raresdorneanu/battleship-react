@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./button.style.scss";
+import classNames from "classnames";
 
-const Button = ({ children, ...props }) => {
+const Button = ({ children, className, ...props }) => {
+  const buttonClassNames = classNames("styled-button", className);
   return (
-    <button className="styled-button" onClick={props.onClick}>
+    <button className={buttonClassNames} onClick={props.onClick}>
       {children}
     </button>
   );
