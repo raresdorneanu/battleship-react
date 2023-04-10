@@ -216,7 +216,7 @@ const Playground = () => {
                 className="change-orientation"
                 onClick={handleOrientationWrapper}
               >
-                Change orientation
+                Change ship direction
               </Button>
 
               {gameDetails?.shipsCoord?.length > 0 ||

@@ -27,6 +27,9 @@ const useSignInApi = () => {
       }
     } catch (error) {
       setErrorMessage("Invalid email or password. Please try again.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
     }
   };
 

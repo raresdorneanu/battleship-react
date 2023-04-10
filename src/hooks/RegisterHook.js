@@ -26,6 +26,9 @@ const useRegisterApi = () => {
       }
     } catch (error) {
       setErrorMessage("Email already in use. Please choose a different email.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
     }
   };
 
