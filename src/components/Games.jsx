@@ -118,10 +118,12 @@ const Games = () => {
               onChange={(event) => setSearchTerm(event.target.value)}
             />
           </div>
+
           <Button className="create-button" onClick={handleCreateGame}>
             Create Game
           </Button>
         </div>
+
         <LogoutButton />
       </div>
     </div>

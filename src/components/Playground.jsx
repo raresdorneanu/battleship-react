@@ -43,6 +43,17 @@ const Playground = () => {
     handleSendMapConfig(shipSet, token, setMapConfigSent, gameId);
   };
 
+  const handleResetGrid = () => {
+    setShipSet((prevShipSet) => {
+      return prevShipSet.map((ship) => {
+        if (ship.position !== null) {
+          return { ...ship, position: null, orientation: "vertical" };
+        }
+        return ship;
+      });
+    });
+  };
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -214,6 +225,13 @@ const Playground = () => {
                 <Button onClick={sendMapConfig}>READY</Button>
               )}
             </div>
+            {gameDetails?.shipsCoord?.length > 0 ||
+            gameDetails.player1Id === null ||
+            gameDetails.player2Id === null ? null : (
+              <Button className="reset-grid" onClick={handleResetGrid}>
+                CLEAR GRID
+              </Button>
+            )}
           </>
         )}
         <div className="pg-flex-container">

@@ -1,12 +1,6 @@
 import axios from "axios";
 
-const getGameDetails = async (
-  token,
-  gameId,
-  setShowGame,
-  showGame,
-  finishMessage
-) => {
+const getGameDetails = async (token, gameId, setShowGame) => {
   try {
     const response = await axios.get(
       `https://react-labs.softbinator.com/game/${gameId}`,
