@@ -1,6 +1,12 @@
 import axios from "axios";
 
-const getGameDetails = async (token, gameId, setShowGame) => {
+const getGameDetails = async (
+  token,
+  gameId,
+  setShowGame,
+  showGame,
+  finishMessage
+) => {
   try {
     const response = await axios.get(
       `https://react-labs.softbinator.com/game/${gameId}`,
@@ -20,10 +26,6 @@ const getGameDetails = async (token, gameId, setShowGame) => {
         gameDetails.status !== "FINISHED"
       ) {
         setShowGame(true);
-      } else if (gameDetails.status === "FINISHED") {
-        alert("This game finished");
-      } else {
-        alert("This game is full!");
       }
       const result = {
         id: response.data.id,

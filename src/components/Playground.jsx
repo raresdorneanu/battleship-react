@@ -87,7 +87,8 @@ const Playground = () => {
           token,
           gameId,
           setShowGame,
-          showGame
+          showGame,
+          finishMessage
         );
         setGameDetails(gameDetails);
       } catch (error) {
@@ -98,7 +99,7 @@ const Playground = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [gameDetails, gameId, showGame, setShowGame, token]);
+  }, [gameDetails, gameId, showGame, setShowGame, token, finishMessage]);
 
   return (
     <PlaygroundContext.Provider
@@ -142,13 +143,13 @@ const Playground = () => {
         </div>
 
         <h2 className="game-title">BATTLESHIP</h2>
+        {finishMessage && <h3 className="finish-message">{finishMessage}</h3>}
         <div
           className="turn"
           style={{
             display: gameDetails?.shipsCoord?.length > 0 ? null : "none",
           }}
         >
-          {finishMessage && <h3>{finishMessage}</h3>}
           {playerName === name && gameDetails?.gameStatus !== "FINISHED" ? (
             <h2>Your turn!</h2>
           ) : null}
@@ -172,7 +173,7 @@ const Playground = () => {
               </span>
             </p>
             <div
-              className="turn"
+              className="whos-turn"
               style={{
                 display: gameDetails?.shipsCoord?.length > 0 ? null : "none",
               }}
@@ -237,6 +238,7 @@ const Playground = () => {
             <Grid />
           </div>
         </div>
+
         <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
       </div>
     </PlaygroundContext.Provider>

@@ -9,6 +9,7 @@ import DashboardContext from "../context/DahsboardContext";
 const Games = () => {
   const { token, games, handleJoinGame, setGames } =
     useContext(DashboardContext);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredGames = games.filter((game) => {

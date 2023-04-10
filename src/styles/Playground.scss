@@ -7,13 +7,20 @@
   .turn {
     height: 50px;
     h2 {
-      font-size: 28px;
+      font-size: 24px;
       color: #fff;
       margin-top: 0;
     }
     h3 {
       font-size: 24px;
       color: #fff;
+    }
+  }
+  .whos-turn {
+    h2 {
+      font-size: 22px;
+      color: #fff;
+      margin-top: 0;
     }
   }
 
@@ -128,11 +135,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 80%;
+  width: 90%;
   margin: auto;
   .op-name {
     margin-left: 20px;
-    width: 30%;
+    width: 40%;
     margin: auto;
     p {
       color: #fff;
@@ -179,6 +186,10 @@
 .waiting {
   color: limegreen;
   font-size: 24px;
+}
+
+.finish-message {
+  color: #fff;
 }
 
 .loading-game {

@@ -108,11 +108,15 @@ const Grid = () => {
 
   const xCount = redCells.reduce((count, cellCoordinate) => {
     const content = getCellContent(cellCoordinate);
-    return count + (content && content.className === "hit-mark" ? 1 : 0);
+    return count + (content && content.props.className === "hit-mark" ? 1 : 0);
   }, 0);
 
   if (gameDetails?.gameStatus === "FINISHED") {
-    setFinishMessage(xCount === 31 ? "YOU LOST" : "YOU WIN");
+    setFinishMessage(
+      xCount === 31
+        ? "Sorry, you lost. Better luck next time!"
+        : "Congratulations, you won! Great job!"
+    );
   }
 
   return (

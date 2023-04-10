@@ -38,7 +38,33 @@ const Dashboard = () => {
 
   const handleJoinGame = (gameId) => {
     setGameId(gameId);
-    joinGame(token, gameId, setShowGame, showGame, name);
+    const game = games.find((g) => g.id === gameId);
+
+    if (!game) {
+      alert("Game not found");
+      return;
+    }
+
+    if (
+      (game?.player1?.email?.split("@")[0] === name ||
+        game?.player2?.email?.split("@")[0] === name) &&
+      game?.status !== "FINISHED"
+    ) {
+      joinGame(token, gameId, setShowGame, showGame);
+    } else if (game?.player1Id === null || game?.player2Id === null) {
+      joinGame(token, gameId, setShowGame, showGame);
+    } else if (
+      (game?.player1?.email?.split("@")[0] === name ||
+        game?.player2?.email?.split("@")[0] === name) &&
+      game?.status === "FINISHED"
+    ) {
+      alert("This game finished");
+    } else if (
+      game?.player1?.email?.split("@")[0] !== name &&
+      game?.player2?.email?.split("@")[0] !== name
+    ) {
+      alert("This game is full");
+    }
   };
 
   return (
