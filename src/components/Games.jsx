@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Slider from "react-slick";
 import Button from "./button/button.component";
 import LogoutButton from "./LogoutButton";
 import "../styles/Playground.scss";
 import createGame from "../api/CreateGameApi";
+import DashboardContext from "../context/DahsboardContext";
 
-const Games = (props) => {
+const Games = () => {
+  const { token, games, handleJoinGame, setGames } =
+    useContext(DashboardContext);
   const [searchTerm, setSearchTerm] = useState("");
-  const name = props.name;
 
-  const filteredGames = props.games.filter((game) => {
+  const filteredGames = games.filter((game) => {
     if (!game.player1 && !game.player2) {
       return false;
     }
@@ -54,9 +56,9 @@ const Games = (props) => {
   };
 
   const handleCreateGame = () => {
-    const newGame = createGame(props.token);
+    const newGame = createGame(token);
     if (newGame) {
-      props.setGames((prevGames) => [...prevGames, newGame]);
+      setGames((prevGames) => [...prevGames, newGame]);
     }
   };
 
@@ -86,7 +88,7 @@ const Games = (props) => {
                       ? "game-free"
                       : "game-full"
                   }`}
-                  onClick={() => props.handleJoinGame(game.id)}
+                  onClick={() => handleJoinGame(game.id)}
                 >
                   <div className="game-info">
                     <div className="game-item-player1">

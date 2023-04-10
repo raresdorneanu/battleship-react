@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Background from "../components/background/background.component";
 import Button from "../components/button/button.component";

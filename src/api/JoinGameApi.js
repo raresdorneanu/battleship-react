@@ -1,7 +1,7 @@
 import axios from "axios";
 import getGameDetails from "./GetGameDetailsApi";
 
-const joinGame = async (token, gameId, setShowGame, showGame, name) => {
+const joinGame = async (token, gameId, setShowGame, showGame) => {
   try {
     const response = await axios.post(
       `https://react-labs.softbinator.com/game/join/${gameId}`,

@@ -1,52 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import PlaygroundContext from "../context/PlaygroundContext";
 
-const GridAction = (props) => {
+const GridAction = () => {
+  const { gameDetails, gameId, setOpen, myId, token } =
+    useContext(PlaygroundContext);
   const [alreadyStruckCells, setAlreadyStruckCells] = useState([]);
-  const [strikeResults, setStrikeResults] = useState({});
-  const [moves, setMoves] = useState(props.gameDetails?.moves);
-  const [heartBeat, setHeartBeat] = useState(false);
-  const token = localStorage.getItem("token");
-  // const animatedClassName = `animate__animated animate__slow ${
-  //   props.playerName === props.name &&
-  //   props.gameDetails?.gameStatus !== "FINISHED" &&
-  //   heartBeat
-  //     ? "animate__heartBeat"
-  //     : ""
-  // }`;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHeartBeat((prev) => !prev);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getStrikeResults = (moves) => {
-    return moves?.reduce((acc, move) => {
-      const cellCoordinate = `${move.y}-${move.x}`;
-      acc[cellCoordinate] = move.result;
-      return acc;
-    }, {});
-  };
-
-  useEffect(() => {
-    setStrikeResults(getStrikeResults(moves));
-  }, [moves]);
 
   let tempRows = [];
   for (let i = 1; i <= 10; i++) {
     tempRows.push(i);
   }
 
-  const [rows, setRows] = useState(tempRows);
+  const rows = tempRows;
 
   let tempCols = [];
   for (let i = 65; i <= 74; i++) {
     tempCols.push(String.fromCharCode(i));
   }
 
-  const [cols, setCols] = useState(tempCols);
+  const cols = tempCols;
 
   const gridDisplay = [];
 
@@ -56,37 +29,39 @@ const GridAction = (props) => {
     }
   }
 
-  const [grid, setGrid] = useState(gridDisplay);
+  const grid = gridDisplay;
 
-  const getCellBackgroundColor = (cellCoordinate) => {
+  const getCellStrikeRes = (cellCoordinate) => {
     if (
-      props.gameDetails &&
-      props.gameDetails.moves &&
-      props.gameDetails.moves.some(
+      gameDetails &&
+      gameDetails.moves &&
+      gameDetails.moves.some(
         (move) =>
           move.y + "-" + move.x === cellCoordinate &&
-          move.playerId === props.myId &&
+          move.playerId === myId &&
           move.result === false
       )
     ) {
-      return "blue";
+      return false;
     }
     if (
-      props.gameDetails &&
-      props.gameDetails.moves &&
-      props.gameDetails.moves.some(
+      gameDetails &&
+      gameDetails.moves &&
+      gameDetails.moves.some(
         (move) =>
           move.y + "-" + move.x === cellCoordinate &&
-          move.playerId === props.myId &&
+          move.playerId === myId &&
           move.result === true
       )
     ) {
-      return "red";
+      return true;
     }
-    return "";
+    return;
   };
   useEffect(() => {
-    const playerMoves = moves.filter((move) => move.playerId === props.myId);
+    const playerMoves = gameDetails?.moves?.filter(
+      (move) => move.playerId === myId
+    );
     const newStruckCells = playerMoves.map((move) => `${move.y}-${move.x}`);
 
     const uniqueStruckCells = newStruckCells.filter(
@@ -96,18 +71,14 @@ const GridAction = (props) => {
     if (uniqueStruckCells.length > 0) {
       setAlreadyStruckCells((prev) => [...prev, ...uniqueStruckCells]);
     }
-  }, [moves, props.gameDetails, alreadyStruckCells]);
+  }, [gameDetails?.moves, myId, alreadyStruckCells]);
 
   const onStrike = async (cellCoordinate) => {
-    // Check if the cell has already been struck
     if (alreadyStruckCells.includes(cellCoordinate)) {
       alert("That cell has been struck");
       return;
     }
-    // Check the moves array for strikes made by the player
-    // If the player has already struck this cell, update the state and return
 
-    // Make the API request
     const [row, col] = cellCoordinate.split("-");
     const requestBody = {
       x: col,
@@ -115,7 +86,7 @@ const GridAction = (props) => {
     };
     try {
       const response = await axios.post(
-        `https://react-labs.softbinator.com/game/strike/${props.gameId}`,
+        `https://react-labs.softbinator.com/game/strike/${gameId}`,
         requestBody,
         {
           headers: {
@@ -125,19 +96,13 @@ const GridAction = (props) => {
         }
       );
       if (response.status === 200) {
-        props.setOpen(false);
-
-        // props.setGridData([
-        //   ...props.gridData,
-        //   { cellCoordinate, result: response.data.result },
-        // ]);
-        // setAlreadyStruckCells([...alreadyStruckCells, cellCoordinate]);
+        setOpen(false);
         if (!alreadyStruckCells.includes(cellCoordinate)) {
           setAlreadyStruckCells((prev) => [...prev, cellCoordinate]);
         }
       }
     } catch (error) {
-      if (props.gameDetails?.shipsCoord?.length > 0) {
+      if (gameDetails?.shipsCoord?.length > 0) {
         alert("Wait for other player to take their turn!");
       } else {
         alert("Please place your ships and get ready before attacking!");
@@ -150,43 +115,44 @@ const GridAction = (props) => {
       <div
         className="grid-container-big"
         style={
-          props.shipsCoord?.length > 0
+          gameDetails?.shipsCoord?.length > 0
             ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
             : null
         }
       >
         <h2>Opponent Grid:</h2>
         <div className="grid-container action-grid">
-          {/* <div className={`grid-container action-grid ${animatedClassName}`}> */}
           {grid.map((elem, index) => {
             if (
-              props.gameDetails &&
-              props.gameDetails.moves &&
-              props.gameDetails.moves.map(
+              gameDetails &&
+              gameDetails.moves &&
+              gameDetails.moves.map(
                 (move) =>
-                  move.y + "-" + move.x === elem && move.playerId === props.myId
+                  move.y + "-" + move.x === elem && move.playerId === myId
               )
             ) {
               return (
                 <div key={index}>
                   <div
                     className={`cell ${
-                      props.gameDetails?.shipsCoord?.length > 0 &&
-                      props.gameDetails?.gameStatus !== "FINISHED"
+                      gameDetails?.shipsCoord?.length > 0 &&
+                      gameDetails?.gameStatus !== "FINISHED"
                         ? "cell-hover"
                         : ""
                     }`}
                     key={index}
                     onClick={() => onStrike(elem)}
                   >
-                    {getCellBackgroundColor(elem) === "red" ? (
+                    {getCellStrikeRes(elem) === true ? (
                       <div className="hit-mark-op"></div>
-                    ) : getCellBackgroundColor(elem) === "blue" ? (
+                    ) : getCellStrikeRes(elem) === false ? (
                       <div className="miss-mark-op"></div>
                     ) : null}
                   </div>
                 </div>
               );
+            } else {
+              return null;
             }
           })}
         </div>

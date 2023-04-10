@@ -1,38 +1,27 @@
-import React, { useEffect, useState } from "react";
-import getGameDetails from "../api/GetGameDetailsApi";
+import React, { useContext } from "react";
 import submarine from "../images/submarine.png";
 import carrier from "../images/carrier.png";
 import destroyer from "../images/destroyer.png";
-import cruiser from "../images/cruiser.png";
 import battleship from "../images/battleship.png";
+import PlaygroundContext from "../context/PlaygroundContext";
 
-const Ship = (props) => {
-  const [activeShip, setActiveShip] = useState(null);
-  const [shipsCoord, setShipsCoord] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const gameDetails = await getGameDetails(
-        props.token,
-        props.gameId,
-        props.setShowGame,
-        props.showGame
-      );
-      setShipsCoord(gameDetails.shipsCoord);
-    };
-
-    fetchData();
-  }, []);
+const Ship = () => {
+  const { shipSet, setActiveShip, activeShip, gameDetails } =
+    useContext(PlaygroundContext);
 
   const handleShipClick = (shipId) => {
-    props.setActiveShip(shipId);
-    setActiveShip(shipId);
+    if (gameDetails?.player2Id) {
+      setActiveShip(shipId);
+    } else {
+      alert("Wait for other player to join");
+    }
   };
 
   return (
     <div className="ship-item-container-big">
-      {shipsCoord?.length > 0 ? null : (
+      {gameDetails?.shipsCoord?.length > 0 ? null : (
         <div className="ship-item-container">
-          {props.ships.map((ship) => (
+          {shipSet.map((ship) => (
             <div
               key={ship.id}
               className={`ship-item ${ship.id === activeShip ? "active" : ""}`}

@@ -5,7 +5,6 @@ export const handleOrientation = (activeShip, setShipSet, mapConfigSent) => {
         if (ship.id === activeShip) {
           const position = ship.position;
           if (!position) {
-            // ship has not been placed on grid yet, do nothing
             return ship;
           }
           const [row, col] = position.split("-");
@@ -19,13 +18,11 @@ export const handleOrientation = (activeShip, setShipSet, mapConfigSent) => {
             col.charCodeAt(0) + (newOrientation === "horizontal" ? size - 1 : 0)
           );
 
-          // Check if ship can fit in new orientation
           if (endRow > 10 || endCol.charCodeAt(0) > 74) {
             alert("Ship can't fit in new orientation");
             return ship;
           }
 
-          // Check if new ship will overlap with any existing ship
           const overlappingShip = prevShips.find((s) => {
             if (s.id !== activeShip && s.position) {
               const [sRow, sCol] = s.position.split("-");

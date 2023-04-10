@@ -18,12 +18,10 @@ export const handleCellClick = (
         ? String.fromCharCode(col.charCodeAt(0) + size - 1)
         : col;
 
-    // Check if ship will fit within the grid
     if (
       (endRow <= 10 && endCol.charCodeAt(0) <= 74) ||
       (endCol.charCodeAt(9) <= 75 && endRow <= 10)
     ) {
-      // Check if ship will overlap with any existing ship
       const overlappingShip = shipSet.find((ship) => {
         if (ship.id !== activeShip && ship.position) {
           const [sRow, sCol] = ship.position.split("-");
@@ -71,7 +69,6 @@ export const handleCellClick = (
             }
           })
         );
-        var shipPosition = pos;
       } else {
         alert("You can't overlap ships");
       }

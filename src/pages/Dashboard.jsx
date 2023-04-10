@@ -7,6 +7,7 @@ import getAllGames from "../api/GetAllGamesApi";
 import Background from "../components/background/background.component";
 import joinGame from "../api/JoinGameApi";
 import Playground from "../components/Playground";
+import DashboardContext from "../context/DahsboardContext";
 
 const Dashboard = () => {
   const token = localStorage.getItem("token");
@@ -25,7 +26,7 @@ const Dashboard = () => {
     getUserDetails();
 
     setName(tokenName.split("@")[0]);
-  }, [userDetails]);
+  }, [userDetails, token, tokenName]);
 
   useEffect(() => {
     async function seeGames() {
@@ -33,7 +34,7 @@ const Dashboard = () => {
       setGames(gamesData);
     }
     seeGames();
-  }, [games]);
+  }, [games, token]);
 
   const handleJoinGame = (gameId) => {
     setGameId(gameId);
@@ -41,31 +42,32 @@ const Dashboard = () => {
   };
 
   return (
-    <Background showFlex={showGame}>
-      {showGame ? (
-        <Playground
-          gameId={gameId}
-          showGame={showGame}
-          setShowGame={setShowGame}
-          userDetails={userDetails}
-          className="playground-reset"
-        />
-      ) : (
-        <div className="dashboard">
-          <Welcome token={token} userDetails={userDetails} name={name} />
-          <div className="games-container-big">
-            <Games
-              token={token}
-              games={games}
-              name={name}
-              handleJoinGame={handleJoinGame}
-              gameId={gameId}
-              setGames={setGames}
-            />
+    <DashboardContext.Provider
+      value={{
+        gameId,
+        showGame,
+        setShowGame,
+        userDetails,
+        token,
+        games,
+        name,
+        handleJoinGame,
+        setGames,
+      }}
+    >
+      <Background showFlex={showGame}>
+        {showGame ? (
+          <Playground className="playground-reset" />
+        ) : (
+          <div className="dashboard">
+            <Welcome token={token} userDetails={userDetails} name={name} />
+            <div className="games-container-big">
+              <Games />
+            </div>
           </div>
-        </div>
-      )}
-    </Background>
+        )}
+      </Background>
+    </DashboardContext.Provider>
   );
 };
 

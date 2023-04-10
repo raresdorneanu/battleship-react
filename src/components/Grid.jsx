@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import "../styles/GridMarks.scss";
+import PlaygroundContext from "../context/PlaygroundContext";
 
-const Grid = (props) => {
-  const token = localStorage.getItem("token");
-  const [shipsCoord, setShipsCoord] = useState([]);
-  const [moves, setMoves] = useState([]);
-
-  useEffect(() => {
-    setShipsCoord(props.gameDetails?.shipsCoord);
-    setMoves(props.gameDetails?.moves);
-  }, [props.gameDetails]);
+const Grid = () => {
+  const {
+    shipSet,
+    gameDetails,
+    setFinishMessage,
+    handleCellClickWrapper,
+    myId,
+  } = useContext(PlaygroundContext);
 
   let tempRows = [];
   for (let i = 1; i <= 10; i++) {
     tempRows.push(i);
   }
 
-  const [rows, setRows] = useState(tempRows);
+  const rows = tempRows;
 
   let tempCols = [];
   for (let i = 65; i <= 74; i++) {
     tempCols.push(String.fromCharCode(i));
   }
 
-  const [cols, setCols] = useState(tempCols);
+  const cols = tempCols;
 
   const gridDisplay = [];
 
@@ -33,22 +33,22 @@ const Grid = (props) => {
     }
   }
 
-  const [grid, setGrid] = useState(gridDisplay);
+  const grid = gridDisplay;
 
   const getCellBackgroundColor = (cellCoordinate) => {
     let backgroundColor = "";
-    if (shipsCoord?.length > 0) {
+    if (gameDetails?.shipsCoord?.length > 0) {
       const [row, col] = cellCoordinate.split("-");
       const cellCoord = { x: col, y: parseInt(row) };
 
-      shipsCoord.forEach((shipCoord) => {
+      gameDetails?.shipsCoord.forEach((shipCoord) => {
         const { x, y } = shipCoord;
         if (x === cellCoord.x && y === cellCoord.y) {
           backgroundColor = "#800020";
         }
       });
     } else {
-      props.ships?.forEach((ship) => {
+      shipSet?.forEach((ship) => {
         if (ship.position) {
           const [row, col] = ship.position.split("-");
           const size = ship.size;
@@ -85,14 +85,11 @@ const Grid = (props) => {
   };
 
   const getCellContent = (cellCoordinate) => {
-    if (moves?.length > 0) {
+    if (gameDetails?.moves?.length > 0) {
       const [row, col] = cellCoordinate.split("-");
       const cellCoord = { x: col, y: parseInt(row) };
-      const move = moves.find(
-        (m) =>
-          m.playerId !== props.myId &&
-          m.x === cellCoord.x &&
-          m.y === cellCoord.y
+      const move = gameDetails?.moves?.find(
+        (m) => m.playerId !== myId && m.x === cellCoord.x && m.y === cellCoord.y
       );
       if (move) {
         if (move.result) {
@@ -111,40 +108,40 @@ const Grid = (props) => {
 
   const xCount = redCells.reduce((count, cellCoordinate) => {
     const content = getCellContent(cellCoordinate);
-    return count + (content && content.props.className === "hit-mark" ? 1 : 0);
+    return count + (content && content.className === "hit-mark" ? 1 : 0);
   }, 0);
 
-  if (props.gameDetails?.gameStatus === "FINISHED") {
-    props.setFinishMessage(xCount === 31 ? "YOU LOST" : "YOU WIN");
+  if (gameDetails?.gameStatus === "FINISHED") {
+    setFinishMessage(xCount === 31 ? "YOU LOST" : "YOU WIN");
   }
 
   return (
     <>
       <div
         className={`grid-container-big ${
-          props.gameDetails?.shipsCoord?.length <= 0 ||
-          props.gameDetails?.gameStatus === "CREATED"
+          gameDetails?.shipsCoord?.length <= 0 ||
+          gameDetails?.gameStatus === "CREATED"
             ? "ships-not-placed"
             : ""
         }`}
         style={
-          shipsCoord?.length > 0
+          gameDetails?.shipsCoord?.length > 0
             ? { transform: "rotateX(60deg) rotateY(0deg) rotateZ(-40deg)" }
             : null
         }
       >
         <h2>Your Grid:</h2>
         <div className="grid-container">
-          {grid.map((elem, index) => (
+          {grid.map((coord, index) => (
             <div
               className={`cell ${
-                props.gameDetails?.shipsCoord?.length <= 0 ? "cell-hover" : ""
+                gameDetails?.shipsCoord?.length <= 0 ? "cell-hover" : ""
               }`}
               key={index}
-              onClick={() => props.onCellClick(elem)}
-              style={{ backgroundColor: getCellBackgroundColor(elem) }}
+              onClick={() => handleCellClickWrapper(coord)}
+              style={{ backgroundColor: getCellBackgroundColor(coord) }}
             >
-              {getCellContent(elem)}
+              {getCellContent(coord)}
             </div>
           ))}
         </div>

@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import Button from "./button/button.component";
 import RegisterContext from "../context/RegisterContext";
 
 const RegisterForm = () => {
-  const [noAction, setNoAction] = useState(true);
   const {
     email,
     setEmail,
@@ -33,7 +32,7 @@ const RegisterForm = () => {
             onChange={(e) => setPassword(e.target.value)}
             id="pass-sign-in"
           />
-          <Button noAction={noAction} type="button" className="styled-button">
+          <Button type="button" className="styled-button">
             REGISTER
           </Button>
           <button className="click-for-register" onClick={backToSignIn}>

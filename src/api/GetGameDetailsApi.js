@@ -20,6 +20,10 @@ const getGameDetails = async (token, gameId, setShowGame) => {
         gameDetails.status !== "FINISHED"
       ) {
         setShowGame(true);
+      } else if (gameDetails.status === "FINISHED") {
+        alert("This game finished");
+      } else {
+        alert("This game is full!");
       }
       const result = {
         id: response.data.id,
@@ -33,19 +37,9 @@ const getGameDetails = async (token, gameId, setShowGame) => {
         shipsCoord: gameDetails.shipsCoord,
       };
 
-      // if (Array.isArray(gameDetails.moves)) {
-      //   result.moves = ;
-      // }
-
-      // if (Array.isArray(gameDetails.shipsCoord)) {
-      //   result.shipsCoord = gameDetails.shipsCoord;
-      // }
-
       return result;
     }
-  } catch (error) {
-    alert("This game is full!");
-  }
+  } catch (error) {}
 };
 
 export default getGameDetails;

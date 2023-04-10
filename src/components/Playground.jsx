@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Grid from "./Grid";
 import Ship from "./Ship";
 import { handleCellClick } from "../utils/cellClick";
@@ -9,39 +9,45 @@ import GridAction from "./GridAction";
 import handleSendMapConfig from "../api/SendMapConfigApi";
 import "../styles/Playground.scss";
 import Button from "./button/button.component";
-import "animate.css";
 import ProgressBar from "./ProgressBar";
 import AccuracyBar from "./AccuracyBar";
+import PlaygroundContext from "../context/PlaygroundContext";
+import DashboardContext from "../context/DahsboardContext";
 
-const Playground = (props) => {
+const Playground = () => {
+  const { gameId, showGame, setShowGame, setGameId, name, token } =
+    useContext(DashboardContext);
   const [shipSet, setShipSet] = useState(ships);
   const [gameDetails, setGameDetails] = useState("");
   const [activeShip, setActiveShip] = useState(null);
   const [mapConfigSent, setMapConfigSent] = useState(false);
   const [open, setOpen] = useState(false);
-  const name = localStorage.getItem("name").split("@")[0];
-  const [shipsCoord, setShipsCoord] = useState([]);
-  const [gridData, setGridData] = useState([]);
   const [playerName, setPlayerName] = useState("");
-  const token = localStorage.getItem("token");
-  const [gameId, setGameId] = useState(props.gameId);
   const [myId, setMyId] = useState("");
   const [finishMessage, setFinishMessage] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const handleCellClickWrapper = (pos) => {
+    handleCellClick(pos, activeShip, shipSet, setShipSet, mapConfigSent);
+  };
+
+  const handleOrientationWrapper = () => {
+    handleOrientation(activeShip, setShipSet, mapConfigSent);
+  };
+
+  const handleBackToAllGames = () => {
+    setShowGame(false);
+  };
+
+  const sendMapConfig = () => {
+    handleSendMapConfig(shipSet, token, setMapConfigSent, gameId);
+  };
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 3000);
   }, [loading]);
-
-  const handleMyId = () => {
-    if (gameDetails) {
-      gameDetails?.player1Email?.split("@")[0] === name
-        ? setMyId(gameDetails?.player1Id)
-        : setMyId(gameDetails?.player2Id);
-    }
-  };
 
   useEffect(() => {
     if (gameDetails) {
@@ -54,18 +60,25 @@ const Playground = (props) => {
   }, [gameDetails]);
 
   useEffect(() => {
+    const handleMyId = () => {
+      if (gameDetails) {
+        gameDetails?.player1Email?.split("@")[0] === name
+          ? setMyId(gameDetails?.player1Id)
+          : setMyId(gameDetails?.player2Id);
+      }
+    };
     handleMyId();
-  }, [myId, gameDetails]);
+  }, [myId, gameDetails, name]);
 
   useEffect(() => {
     if (
       gameDetails &&
-      shipsCoord?.length > 0 &&
+      gameDetails?.shipsCoord?.length > 0 &&
       gameDetails?.playerToMoveId === myId
     ) {
       setOpen(true);
     }
-  }, [shipsCoord, gameDetails]);
+  }, [gameDetails, myId]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -73,11 +86,10 @@ const Playground = (props) => {
         const gameDetails = await getGameDetails(
           token,
           gameId,
-          props.setShowGame,
-          props.showGame
+          setShowGame,
+          showGame
         );
         setGameDetails(gameDetails);
-        setShipsCoord(gameDetails.shipsCoord);
       } catch (error) {
         console.error(error);
       }
@@ -86,31 +98,39 @@ const Playground = (props) => {
     return () => {
       clearInterval(interval);
     };
-  }, [gameDetails]);
-
-  const handleCellClickWrapper = (pos) => {
-    // create a wrapper function to pass as the callback to the Grid component
-    handleCellClick(pos, activeShip, shipSet, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
-  };
-
-  const handleOrientationWrapper = () => {
-    // create a wrapper function to pass as the callback to the Grid component
-    handleOrientation(activeShip, setShipSet, mapConfigSent); // call the imported handleCellClick function with the required arguments
-  };
-
-  const handleBackToAllGames = () => {
-    props.setShowGame(false);
-  };
-
-  const sendMapConfig = async () => {
-    handleSendMapConfig(shipSet, token, setMapConfigSent, gameId);
-  };
+  }, [gameDetails, gameId, showGame, setShowGame, token]);
 
   return (
-    <>
+    <PlaygroundContext.Provider
+      value={{
+        shipSet,
+        setShipSet,
+        gameDetails,
+        setGameDetails,
+        activeShip,
+        setActiveShip,
+        mapConfigSent,
+        setMapConfigSent,
+        open,
+        setOpen,
+        name,
+        playerName,
+        setPlayerName,
+        token,
+        gameId,
+        setGameId,
+        myId,
+        setMyId,
+        finishMessage,
+        setFinishMessage,
+        loading,
+        setLoading,
+        handleCellClickWrapper,
+      }}
+    >
       <div
         className={`playground-container ${
-          shipsCoord?.length > 0 ? "ships-placed" : ""
+          gameDetails?.shipsCoord?.length > 0 ? "ships-placed" : ""
         }`}
         style={loading ? { position: "absolute" } : { position: "relative" }}
       >
@@ -124,7 +144,9 @@ const Playground = (props) => {
         <h2 className="game-title">BATTLESHIP</h2>
         <div
           className="turn"
-          style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+          style={{
+            display: gameDetails?.shipsCoord?.length > 0 ? null : "none",
+          }}
         >
           {finishMessage && <h3>{finishMessage}</h3>}
           {playerName === name && gameDetails?.gameStatus !== "FINISHED" ? (
@@ -151,7 +173,9 @@ const Playground = (props) => {
             </p>
             <div
               className="turn"
-              style={{ display: shipsCoord?.length > 0 ? null : "none" }}
+              style={{
+                display: gameDetails?.shipsCoord?.length > 0 ? null : "none",
+              }}
             >
               <h2
                 style={
@@ -174,14 +198,7 @@ const Playground = (props) => {
         )}
         {gameDetails?.shipsCoord?.length > 0 ? null : (
           <>
-            <Ship
-              ships={shipSet}
-              setActiveShip={setActiveShip}
-              token={token}
-              gameId={gameId}
-              showGame={props.showGame}
-              setShowGame={props.setShowGame}
-            />
+            <Ship />
             <div className="ships-not-placed-button-flex">
               <Button
                 className="change-orientation"
@@ -198,14 +215,7 @@ const Playground = (props) => {
             </div>
           </>
         )}
-        <div
-          className="pg-flex-container"
-          // style={
-          //   gameDetails?.shipsCoord?.length > 0
-          //     ? { width: "70%" }
-          //     : { width: "90%" }
-          // }
-        >
+        <div className="pg-flex-container">
           <div
             className="pg-flex-left"
             style={
@@ -214,23 +224,7 @@ const Playground = (props) => {
                 : { display: "none" }
             }
           >
-            {gameDetails?.shipsCoord?.length > 0 ? (
-              <GridAction
-                showGame={props.showGame}
-                setShowGame={props.setShowGame}
-                gameId={gameId}
-                onCellClick={handleCellClickWrapper}
-                gameDetails={gameDetails}
-                open={open}
-                setOpen={setOpen}
-                gridData={gridData}
-                setGridData={setGridData}
-                myId={myId}
-                playerName={playerName}
-                name={name}
-                shipsCoord={shipsCoord}
-              />
-            ) : null}
+            {gameDetails?.shipsCoord?.length > 0 ? <GridAction /> : null}
           </div>
           <div
             className="pg-flex-right"
@@ -240,24 +234,12 @@ const Playground = (props) => {
                 : { paddingRight: "0" }
             }
           >
-            <Grid
-              ships={shipSet}
-              onCellClick={handleCellClickWrapper}
-              activeShip={activeShip}
-              setShowGame={props.setShowGame}
-              gameId={gameId}
-              showGame={props.showGame}
-              setShips={setShipSet}
-              gameDetails={gameDetails}
-              myId={myId}
-              finishMessage={finishMessage}
-              setFinishMessage={setFinishMessage}
-            />
+            <Grid />
           </div>
         </div>
         <Button onClick={handleBackToAllGames}>Back To Lobby</Button>
       </div>
-    </>
+    </PlaygroundContext.Provider>
   );
 };
 export default Playground;
