@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Grid from "./Grid";
 import Ship from "./Ship";
 import { handleCellClick } from "../utils/cellClick";
@@ -91,8 +91,10 @@ const Playground = () => {
     }
   }, [gameDetails, myId]);
 
+  const intervalRef = useRef(null);
+
   useEffect(() => {
-    const interval = setInterval(async () => {
+    intervalRef.current = setInterval(async () => {
       try {
         const gameDetails = await getGameDetails(
           token,
@@ -108,7 +110,7 @@ const Playground = () => {
     }, 1000);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalRef.current);
     };
   }, [gameDetails, gameId, showGame, setShowGame, token, finishMessage]);
 

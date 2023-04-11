@@ -43,7 +43,11 @@ const Grid = () => {
 
       gameDetails?.shipsCoord.forEach((shipCoord) => {
         const { x, y } = shipCoord;
-        if (x === cellCoord.x && y === cellCoord.y) {
+        if (
+          x === cellCoord.x &&
+          y === cellCoord.y &&
+          shipCoord.playerId === myId
+        ) {
           backgroundColor = "#800020";
         }
       });
@@ -134,6 +138,7 @@ const Grid = () => {
             : null
         }
       >
+        {console.log(gameDetails)}
         <h2>Your Grid:</h2>
         <div className="grid-container">
           {grid.map((coord, index) => (
