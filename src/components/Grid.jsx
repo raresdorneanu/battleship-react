@@ -138,7 +138,6 @@ const Grid = () => {
             : null
         }
       >
-        {console.log(gameDetails)}
         <h2>Your Grid:</h2>
         <div className="grid-container">
           {grid.map((coord, index) => (
