@@ -56,8 +56,8 @@ const Games = () => {
     ],
   };
 
-  const handleCreateGame = () => {
-    const newGame = createGame(token);
+  const handleCreateGame = async () => {
+    const newGame = await createGame(token);
     if (newGame) {
       setGames((prevGames) => [...prevGames, newGame]);
     }
@@ -85,9 +85,11 @@ const Games = () => {
                   className={`game-item ${
                     game.status === "FINISHED"
                       ? "game-finished"
-                      : game.player1 !== null && game.player2 === null
+                      : game.status === "CREATED"
                       ? "game-free"
-                      : "game-full"
+                      : game.status === "ACTIVE" || game.status === "MAP_CONFIG"
+                      ? "game-full"
+                      : ""
                   }`}
                   onClick={() => handleJoinGame(game.id)}
                 >

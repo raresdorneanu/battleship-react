@@ -26,7 +26,7 @@ const Dashboard = () => {
     getUserDetails();
 
     setName(tokenName.split("@")[0]);
-  }, [userDetails, token, tokenName]);
+  }, [token, tokenName]);
 
   useEffect(() => {
     async function seeGames() {
@@ -34,7 +34,7 @@ const Dashboard = () => {
       setGames(gamesData);
     }
     seeGames();
-  }, [games, token]);
+  }, [token]);
 
   const handleJoinGame = (gameId) => {
     setGameId(gameId);
